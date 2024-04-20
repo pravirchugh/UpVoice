@@ -117,7 +117,7 @@ export default {
 }
 
 .investor-signup-form button[type="submit"] {
-  background-color: #2c3e50;
+  background-color: #551a8b;
   color: white;
   padding: 10px 20px;
   border: none;

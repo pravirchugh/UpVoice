@@ -1,4 +1,11 @@
 <template>
+<div class="card flex justify-content-center">
+    <Sidebar v-model:visible="visible" header="Sidebar">
+        <p>Raise Issue</p>
+    </Sidebar>
+    <!-- <Button icon="pi pi-arrow-right" @click="visible = true" /> -->
+</div>
+<Button icon="pi pi-plus" @click="visible = true" />
   <div class="form-container">
     <h2>Raise your voice</h2>
     <div class="form-row">
