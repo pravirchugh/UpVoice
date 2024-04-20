@@ -5,6 +5,10 @@ from flask import Flask, request, jsonify
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
+from bson.objectid import ObjectId
+from bson.errors import InvalidId
+from datetime import datetime
+
 app = Flask(__name__)
 
 uri = "mongodb+srv://pravirc:pravirc1@cluster0.o07b6ry.mongodb.net/?retryWrites=true&w=majority"
@@ -37,7 +41,15 @@ def login_user():
 @app.route('/logout-user', methods=['POST'])
 def logout_user():
     data = request.json
-    db.users.update_one({'username': data['username']}, {'$set': {'logged_in': False}})
+
+    logged_in_user = db.users.find_one({'logged_in': True})
+
+    if not logged_in_user:
+        return jsonify({'message': 'User not logged in, thus cannot be logged out: '}), 404
+    else:
+        db.users.update_one({'username': logged_in_user['username']}, {'$set': {'logged_in': False}})
+        return jsonify({'message': 'User Logged out successfully: ' + logged_in_user['username']}), 200
+        # data['username']
     '''
     data = request.json
     # Check if user already exists in the database
@@ -70,7 +82,14 @@ def login_stakeholder():
 @app.route('/logout-stakeholder', methods=['POST'])
 def logout_stakeholder():
     data = request.json
-    db.stakeholders.update_one({'username': data['username']}, {'$set': {'logged_in': False}})
+
+    logged_in_stakeholder = db.stakeholders.find_one({'logged_in': True})
+
+    if not logged_in_stakeholder:
+        return jsonify({'message': 'User not logged in, thus cannot be logged out: '}), 404
+    else:
+        db.users.update_one({'username': logged_in_stakeholder['username']}, {'$set': {'logged_in': False}})
+        return jsonify({'message': 'User Logged out successfully: ' + logged_in_stakeholder['username']}), 200
     '''
     # Check if user already exists in the database
     existing_stakeholder = db.stakeholders.find_one({'username': data['username']})
@@ -84,48 +103,6 @@ def logout_stakeholder():
     else:
         return jsonify({'message': 'Account not found: ' + data['username']}), 404
     '''
-
-@app.route('/add-voice', methods=['POST'])
-def add_voice():
-    data = request.json
-    username = data['username']
-
-    company = data['company']
-
-    sector = data['sector']
-
-    summary = data['summary']
-
-    user = db.users.find_one({'username': username})
-
-    # Find the associated email to send it to (based on the company!) TODO
-    # stakeholder = db.stakeholders.find_one({'company': company})
-    # stakeholder_email = stakeholder['email']
-
-    stakeholder_email = "stakeholder@stakeholder_company.com"
-
-    if not user:
-        return jsonify({"message": "User does not exist"}), 404
-    voice = {
-        'citizen_username': username,
-        'company': company,
-        'sector': sector,
-        'stakeholder_email': stakeholder_email,
-        'voice_summary': summary,
-        'email': "",
-        'subject': "",
-        'urgency': 50,
-        'status': "unresolved"
-    }
-
-    # Call Gemini here to fill out the email, subject and urgency (50 is just the default)
-
-    # use Mailchimp in this endpoint to send the email
-
-    # Store into collection called voices
-    db.voices.insert_one(voice)
-    return jsonify({'message': 'Voice submitted successfully'}), 201
-
 
 
 @app.route('/add-user', methods=['POST'])
@@ -142,7 +119,7 @@ def add_user():
     new_user = {
         'username': data['username'],
         'email': data['email'],
-        'email_provided': data['email_provided'], # flag to check if the email has been provided and thatwe can send an email there. 
+        'email_provided': data['email_provided'], # TODO: flag to check if the email has been provided and thatwe can send an email there. 
         'password': data['password'],
         'voices': [],  # Initialize an empty list of voices
     }
@@ -174,6 +151,150 @@ def add_stakeholder():
     return jsonify({'message': 'Stakeholder created successfully', 'user': new_stakeholder}), 201
 
 #email, name, company, password, leave voices as is 
+
+@app.route('/view-user-voices', methods=['POST'])
+def view_user_voices():
+    user = db.users.find_one({'logged_in': True})
+    
+    if not user:
+        return jsonify({'message': 'No user currently logged in'}), 404
+    
+    voices = list(db.voices.find({'citizen_username': user['username']}))
+
+    # print(voices)
+    
+    # conversion into renderable struct for frontend
+    voices_list = [{
+        'id': str(voice['_id']),
+        'citizen_username': voice['citizen_username'],
+        'company': voice['company'],
+        'stakeholder_email': voice['stakeholder_email'],
+        'voice_summary': voice['voice_summary'],
+        'email': voice['email'],
+        'subject': voice['subject'],
+        'urgency': voice['urgency'],
+        'sector': voice['sector'],
+        'status': voice['status']
+    } for voice in voices]
+    
+    return jsonify({'user': user['username'], 'voices': voices_list}), 200
+
+
+@app.route('/view-stakeholder-voices', methods=['POST'])
+def view_stakeholder_voices():
+    stakeholder = db.stakeholders.find_one({'logged_in': True})
+    
+    if not stakeholder:
+        return jsonify({'message': 'No stakeholder currently logged in'}), 404
+    
+    voices = list(db.voices.find({'stakeholder_email': stakeholder['email']}))
+
+    # print(voices)
+    
+    # conversion into renderable struct for frontend
+    voices_list = [{
+        'citizen_username': voice['citizen_username'],
+        'company': voice['company'],
+        'stakeholder_email': voice['stakeholder_email'],
+        'voice_summary': voice['voice_summary'],
+        'email': voice['email'],
+        'subject': voice['subject'],
+        'urgency': voice['urgency'],
+        'sector': voice['sector'],
+        'status': voice['status']
+    } for voice in voices]
+    
+    return jsonify({'stakeholder': stakeholder['email'], 'voices': voices_list}), 200
+
+@app.route('/delete-voice', methods=['DELETE'])
+def delete_voice():
+    data = request.json
+    voice_id = data.get('id')
+
+    if not voice_id:
+        return jsonify({'message': 'Voice ID is required'}), 400
+
+    try:
+        # Attempt to convert the provided ID to a valid ObjectId
+        oid = ObjectId(voice_id)
+    except InvalidId:
+        return jsonify({'message': 'Invalid voice ID'}), 400
+    
+    # Check if the voice exists and delete it
+    result = db.voices.delete_one({'_id': oid})
+    
+    if result.deleted_count == 0:
+        return jsonify({'message': 'No voice found with the provided ID'}), 404
+    
+    return jsonify({'message': 'Voice deleted successfully'}), 200
+
+@app.route('/change-voice-status', methods=['POST'])
+def change_voice_status():
+    data = request.json
+    voice_id = data.get('id')
+    new_status = data.get('new_status')
+
+    if not voice_id:
+        return jsonify({'message': 'Voice ID is required'}), 400
+
+    try:
+        # Attempt to convert the provided ID to a valid ObjectId
+        oid = ObjectId(voice_id)
+    except InvalidId:
+        return jsonify({'message': 'Invalid voice ID'}), 400
+    
+    # Change cur_voice's status to change_status
+    result = db.voices.find_one_and_update(
+        {'_id': oid},
+        {'$set': {'status': new_status}},
+        return_document=True
+    )
+    
+    if result is None:
+        return jsonify({'message': 'No voice found with the provided ID'}), 404
+    
+    return jsonify({'message': 'Voice status updated successfully'}), 200
+
+@app.route('/add-voice', methods=['POST'])
+def add_voice():
+    data = request.json
+    username = data['username']
+
+    company = data['company']
+
+    sector = data['sector']
+
+    summary = data['summary']
+
+    user = db.users.find_one({'username': username})
+
+    # Find the associated email to send it to (based on the company!)
+    stakeholder = db.stakeholders.find_one({'company': company})
+    stakeholder_email = stakeholder['email']
+
+    if not user:
+        return jsonify({"message": "User does not exist"}), 404
+    voice = {
+        'citizen_username': username,
+        'company': company,
+        'sector': sector,
+        'stakeholder_email': stakeholder_email,
+        'voice_summary': summary,
+        'email': "",
+        'subject': "",
+        'urgency': 50,
+        'status': "unresolved"
+    }
+
+    # Call Gemini here to fill out the email, subject and urgency (50 is just the default)
+
+    # use Mailchimp/Sendgrid/Fetch in this endpoint to send the email
+
+    # Store into collection called voices
+    db.voices.insert_one(voice)
+    return jsonify({'message': 'Voice submitted successfully'}), 201
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
