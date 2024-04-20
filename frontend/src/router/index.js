@@ -1,6 +1,5 @@
 import {
   createRouter,
-  createWebHashHistory,
   createWebHistory,
 } from "vue-router";
 import Home from "../views/Home.vue";
@@ -12,7 +11,7 @@ import InvestorLogin from "../views/InvestorLogin.vue";
 import CitizenLogin from "../views/CitizenLogin.vue";
 import CitizenDashboard from "../views/CitizenDashboard.vue";
 import authGuard from "../guards/AuthGuard";
-import authService from "../services/AuthService";
+import { isUserLoggedIn } from "../utils";
 
 const routes = [
   {
@@ -24,31 +23,37 @@ const routes = [
     path: "/auth/login",
     name: "Login",
     component: Login,
+    meta: { requiresGuest: true }
   },
   {
     path: "/auth/signup",
     name: "Signup",
     component: Signup,
+    meta: { requiresGuest: true }
   },
   {
     path: "/auth/signup/citizen",
     name: "CitizenSignup",
     component: CitizenSignupForm,
+    meta: { requiresGuest: true }
   },
   {
     path: "/auth/signup/investor",
     name: "InvestorSignup",
     component: InvestorSignupForm,
+    meta: { requiresGuest: true }
   },
   {
     path: "/auth/login/citizen",
     name: "CitizenLogin",
     component: CitizenLogin,
+    meta: { requiresGuest: true }
   },
   {
     path: "/auth/login/investor",
     name: "InvestoLogin",
     component: InvestorLogin,
+    meta: { requiresGuest: true }
   },
   {
     path: "/citizen/dashboard",
@@ -61,6 +66,14 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresGuest) && isUserLoggedIn()) {
+    next({ name: 'Home' });
+  } else {
+    next(); // Continue to the route
+  }
 });
 
 export default router;

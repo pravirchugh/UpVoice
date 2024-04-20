@@ -21,7 +21,7 @@ export function isUserLoggedIn() {
   const token = authService.getToken();
 
   if (!isEmpty(token)) {
-    isUserLoggedIn = true;
+    isLoggedIn = true;
   }
 
   return isLoggedIn;

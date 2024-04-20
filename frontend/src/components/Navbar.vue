@@ -6,9 +6,9 @@
     <div class="navbar-menu">
       <div class="navbar-end">
         <!-- Signup and Login Links -->
-        <router-link to="/auth/signup" class="navbar-item">Signup</router-link>
-        <router-link to="/auth/login" class="navbar-item">Login</router-link>
-        <router-link v-if="isLoggedIn()"  to="/citizen/dashboard" class="navbar-item">Citizen dashboard</router-link>
+        <router-link v-if="!isLoggedIn()" to="/auth/signup" class="navbar-item">Signup</router-link>
+        <router-link v-if="!isLoggedIn()" to="/auth/login" class="navbar-item">Login</router-link>
+        <router-link v-if="isLoggedIn() && $route.name !== 'CitizenDashboard'"  to="/citizen/dashboard" class="navbar-item">Citizen dashboard</router-link>
       </div>
     </div>
   </nav>

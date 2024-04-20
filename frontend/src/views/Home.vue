@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  name: 'UpVoice',
+  name: 'home',
   data() {
     return {
       env: process.env.NODE_ENV
