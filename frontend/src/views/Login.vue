@@ -2,7 +2,7 @@
   <div class="login-container">
     <h2>Login</h2>
     <!-- User Type Selection -->
-    <div>
+    <div style="flex: 1; flex-direction: column;">
       <label>
         <input type="radio" value="citizen" v-model="selectedUserType"> Citizen
       </label>
@@ -42,8 +42,10 @@ export default {
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  width: 400px; /* Adjust width as needed */
-  margin: 0 auto; /* Center the container */
+  width: 400px;
+  /* Adjust width as needed */
+  margin: 0 auto;
+  /* Center the container */
   border: 1px solid #ccc;
   border-radius: 5px;
 }
@@ -63,12 +65,12 @@ input[type="radio"] {
 }
 
 button {
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50;
+  /* Green */
   color: white;
   padding: 10px 20px;
   border: none;
   border-radius: 3px;
   cursor: pointer;
   margin-top: 20px;
-}
-</style>
+}</style>

@@ -1,20 +1,36 @@
 <template>
   <form class="signup-form">
-    <h2>Sign Up</h2>
+    <h2 style="text-transform: uppercase;">Sign Up</h2>
 
-    <label for="username">Username:</label>
-    <input type="text" id="username" placeholder="Enter username" v-model="username">
+    <div class="flex flex-column gap-2" style="width: 100%; margin: 10px 0px;">
+      <label for="username">Username</label>
+      <InputText id="username" v-model="username"  style="width: 100%;" />
+    </div>
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" placeholder="Enter email" v-model="email">
+    <div class="flex flex-column gap-2" style="width: 100%; margin: 10px 0px;">
+      <label for="email">Email</label>
+      <InputText id="email" v-model="email"  style="width: 100%;" />
+    </div>
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" placeholder="Enter password" v-model="password">
+    <div class="flex flex-column gap-2" style="width: 100%; margin: 10px 0px;">
+      <label for="password">Password</label>
+      <InputText id="password" v-model="password" type="password" style="width: 100%;" />
+    </div>
 
-    <label for="confirmPassword">Confirm Password:</label>
-    <input type="password" id="confirmPassword" placeholder="Confirm password" v-model="confirmPassword">
+    <div class="flex flex-column gap-2" style="width: 100%; margin: 10px 0px;">
+      <label for="confirmPassword">Confirm Password</label>
+      <InputText id="confirmPassword" v-model="confirmPassword" type="password" style="width: 100%;" />
+    </div> 
 
-    <button type="submit" @click="this.performSignUp">Sign Up</button>
+    <Button
+      @click="this.performSignUp"
+      style="padding: 15px; width: 60%; font-size: 18px; border-radius: 6px; text-transform: uppercase;">
+      <span style="text-align: center; width: 100%;">
+        Sign Up
+      </span>
+    </Button>
+
+    <!-- <button type="submit" @click="this.performSignUp">Sign Up</button> -->
   </form>
 </template>
 

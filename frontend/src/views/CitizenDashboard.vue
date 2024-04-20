@@ -12,12 +12,12 @@
     </div>
     <div class="form-row">
       <label for="issue">Issue:</label>
-      <Textarea id="issue" v-model="issue" rows="2" :autoResize="true" />
+      <Textarea id="issue" style="width: 100%; border-radius: 6px; border-color: #cbd5e1; padding: 5px;" v-model="issue" rows="5" :autoResize="true" />
     </div>
-    <div class="form-row">
+    <!-- <div class="form-row">
       <label for="emailPrompt">Email prompt:</label>
       <Textarea id="emailPrompt" v-model="emailPrompt" disabled />
-    </div>
+    </div> -->
     <div class="form-row">
       <Button label="Send" @click="submitForm" />
     </div>

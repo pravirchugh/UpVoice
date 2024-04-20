@@ -6,7 +6,7 @@ const ENDPOINTS = {
   SIGN_UP_USER: '/add-user',
   SIGN_UP_STAKEHOLDER: '/add-stakeholder',
   LOGOUT_USER: '/logout-user',
-  LOGOUT_USER: '/logout-stakeholder',
+  LOGOUT_STAKEHOLDER: '/logout-stakeholder',
 }
 
 class AuthService extends ApiService {
@@ -41,17 +41,32 @@ class AuthService extends ApiService {
 
   destroySession = () => {
     localStorage.clear()
-    this.api.removeHeaders(['Authorization'])
+    // this.api.removeHeaders(['Authorization'])
   }
 
   loginUser = async (loginData) => {
-    const { data } = await this.apiClient.post(ENDPOINTS.LOGIN, loginData)
+    const { data } = await this.apiClient.post(ENDPOINTS.LOGIN_USER, loginData)
     this.createSession(loginData)
     return loginData
   }
 
-  logout = async () => {
-    const { data } = await this.apiClient.post(ENDPOINTS.LOGOUT)
+  loginStakeholder = async (loginData) => {
+    const { data } = await this.apiClient.post(ENDPOINTS.LOGIN_STAKEHOLDER, loginData)
+    this.createSession(loginData)
+    return loginData
+  }
+
+  logoutUser = async () => {
+    // const { data } = await this.apiClient.post(ENDPOINTS.LOGOUT_USER)
+    this.destroySession()
+    return {
+      ok: true,
+      // data,
+    }
+  }
+
+  logoutStakeholder = async () => {
+    const { data } = await this.apiClient.post(ENDPOINTS.LOGOUT_STAKEHOLDER)
     this.destroySession()
     return {
       ok: true,

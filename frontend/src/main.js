@@ -8,6 +8,9 @@ import Card from 'primevue/card'
 import Button from 'primevue/button'
 import Fieldset from 'primevue/fieldset'
 import Dropdown from 'primevue/dropdown'
+import InputText from 'primevue/inputtext';
+import RadioButton from 'primevue/radiobutton';
+
 
 const app = createApp(App)
 
@@ -18,5 +21,7 @@ app.component('Card', Card)
 app.component('Button', Button)
 app.component('Fieldset', Fieldset)
 app.component('Dropdown', Dropdown)
+app.component('InputText', InputText)
+app.component('RadioButton', RadioButton)
 
 app.mount('#app')

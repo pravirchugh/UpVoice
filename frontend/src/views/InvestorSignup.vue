@@ -2,26 +2,42 @@
   <form class="investor-signup-form" @submit.prevent="handleSubmit">
     <h2>Investor Sign Up</h2>
 
-    <label for="name">Name:</label>
-    <input type="text" id="name" placeholder="Enter your name">
+    <div class="flex flex-column gap-2" style="width: 100%;margin: 10px 0px;">
+      <label for="name">Name</label>
+      <InputText id="name" v-model="name" style="width: 100%;" />
+    </div>
 
-    <label for="companyName">Company Name:</label>
-    <input type="text" id="companyName" placeholder="Enter your company name">
+    <div class="flex flex-column gap-2" style="width: 100%;margin: 10px 0px;">
+      <label for="companyName">Name</label>
+      <InputText id="companyName" v-model="companyName" style="width: 100%;" />
+    </div>
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" placeholder="Enter your email">
+    <div class="flex flex-column gap-2" style="width: 100%;margin: 10px 0px;">
+      <label for="email">Email</label>
+      <InputText id="email" v-model="email" style="width: 100%;" />
+    </div>
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" placeholder="Enter your password">
+    <div class="flex flex-column gap-2" style="width: 100%; margin: 10px 0px;">
+      <label for="password">Password</label>
+      <InputText id="password" v-model="password" type="password" style="width: 100%;" />
+    </div>
 
-    <label for="confirmPassword">Confirm Password:</label>
-    <input type="password" id="confirmPassword" placeholder="Confirm your password">
+    <div class="flex flex-column gap-2" style="width: 100%; margin: 10px 0px;">
+      <label for="confirmPassword">Confirm Password</label>
+      <InputText id="confirmPassword" v-model="confirmPassword" type="password" style="width: 100%;" />
+    </div>
 
-    <button type="submit">Sign Up</button>
+    <Button
+      @click="handleSubmit"
+      style="padding: 15px; width: 60%; font-size: 18px; border-radius: 6px; text-transform: uppercase;">
+      <span style="text-align: center; width: 100%;">
+        SignUp
+      </span>
+    </Button>
+    <!-- <button type="submit">Sign Up</button> -->
     <p v-if="errorMessage">{{ errorMessage }}</p>
   </form>
 </template>
-
 
 <script>
 export default {
