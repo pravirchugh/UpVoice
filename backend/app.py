@@ -269,6 +269,26 @@ def change_voice_status():
     if result is None:
         return jsonify({'message': 'No voice found with the provided ID'}), 404
     
+    voice = db.voices.find_one(
+    {'_id': oid}
+    )
+
+    message = Mail(
+    from_email=os.getenv('SENDGRID_FROM_EMAIL'),
+    to_emails=voice['stakeholder_email'],
+    subject='Status of voice changed to: ' + voice['status'],
+    html_content='<h1>Title for Email</h1> <br> <strong>Line of Emphasis Here</strong> Please do not reply to this email.')
+    try:
+        sg = SendGridAPIClient(os.environ['SENDGRID_API_KEY'])
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+        print("SUCCESS!")
+    except Exception as e:
+        print("EXCEPTION!")
+        print(str(e))
+    
     return jsonify({'message': 'Voice status updated successfully'}), 200
 
 @app.route('/add-voice', methods=['POST'])
