@@ -9,6 +9,22 @@ from bson.objectid import ObjectId
 from bson.errors import InvalidId
 from datetime import datetime
 
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+
+from dotenv import load_dotenv
+import os
+
+load_dotenv("sendgrid.env")  # This loads the .env file at the path given, or default to the .env file in the same directory as the script.
+
+# Now you can safely access the environment variable
+api_key = os.getenv('SENDGRID_API_KEY')
+if api_key is None:
+    raise ValueError("SENDGRID_API_KEY is not set in the environment.")
+else:
+    print("found the api key")
+
 app = Flask(__name__)
 
 uri = "mongodb+srv://pravirc:pravirc1@cluster0.o07b6ry.mongodb.net/?retryWrites=true&w=majority"
@@ -288,12 +304,27 @@ def add_voice():
 
     # Call Gemini here to fill out the email, subject and urgency (50 is just the default)
 
-    # use Mailchimp/Sendgrid/Fetch in this endpoint to send the email
+    # use Sendgrid/Fetch in this endpoint to send the email
+    message = Mail(
+    from_email=os.getenv('SENDGRID_FROM_EMAIL'),
+    to_emails=voice['stakeholder_email'],
+    subject='Subject line from LLM here ' + sector,
+    html_content='<h1>Title for Email</h1> <br> <strong>Line of Emphasis Here</strong> Please do not reply to this email.')
+    try:
+        sg = SendGridAPIClient(os.environ['SENDGRID_API_KEY'])
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+        print("SUCCESS!")
+    except Exception as e:
+        print("EXCEPTION!")
+        print(str(e))
 
     # Store into collection called voices
     db.voices.insert_one(voice)
     return jsonify({'message': 'Voice submitted successfully'}), 201
-
+    
 
 
 if __name__ == '__main__':
