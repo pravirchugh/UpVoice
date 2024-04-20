@@ -6,17 +6,24 @@
     <div class="navbar-menu">
       <div class="navbar-end">
         <!-- Signup and Login Links -->
-        <router-link to="/signup" class="navbar-item">Signup</router-link>
-        <router-link to="/login" class="navbar-item">Login</router-link>
-        <router-link to="/dashboard/citizen" class="navbar-item">Citizen dashboard</router-link>
+        <router-link to="/auth/signup" class="navbar-item">Signup</router-link>
+        <router-link to="/auth/login" class="navbar-item">Login</router-link>
+        <router-link v-if="isLoggedIn()"  to="/citizen/dashboard" class="navbar-item">Citizen dashboard</router-link>
       </div>
     </div>
   </nav>
 </template>
 
 <script>
+import { isUserLoggedIn } from '../utils';
+
 export default {
-  name: 'Navbar'
+  name: 'Navbar',
+  methods: {
+    isLoggedIn() {
+      return isUserLoggedIn();
+    }
+  }
 }
 </script>
 

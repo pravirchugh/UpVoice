@@ -27,9 +27,9 @@ export default {
   methods: {
     handleLogin() {
       if (this.selectedUserType === 'citizen') {
-        router.push('/login/citizen');
+        router.push('/auth/login/citizen');
       } else {
-        router.push('/login/investor');
+        router.push('/auth/login/investor');
       }
     }
   }

@@ -28,9 +28,9 @@ export default {
   methods: {
     handleSubmit() {
       if (this.selectedUserType === 'citizen') {
-        router.push('/signup/citizen');
+        router.push('/auth/signup/citizen');
       } else {
-        router.push('/signup/investor');
+        router.push('/auth/signup/investor');
       }
     }
   }

@@ -34,16 +34,21 @@ export default {
   },
   methods: {
     performSignUp() {
-      if(this.password !== this.confirmPassword) {
+      const emailProvided = false
+      if (this.email !== '') {
+        emailProvided = true
+      }
+
+      if (this.password !== this.confirmPassword) {
         return;
       }
 
       const payload = {
         username: this.username,
-        email: this.email,
+        ...(emailProvided ? { email: this.email, "email_provided": emailProvided } : {}),
         password: this.password
       }
-      return authService.signup(payload)
+      return authService.signupUser(payload)
     }
   },
   mounted() {

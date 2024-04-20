@@ -1,9 +1,12 @@
 import ApiService from './ApiService'
 
 const ENDPOINTS = {
-  LOGIN: '/auth/login',
-  SIGN_UP: '/auth/register',
-  LOGOUT: '/auth/logout',
+  LOGIN_USER: '/login-user',
+  LOGIN_STAKEHOLDER: '/login-stakeholder',
+  SIGN_UP_USER: '/add-user',
+  SIGN_UP_STAKEHOLDER: '/add-stakeholder',
+  LOGOUT_USER: '/logout-user',
+  LOGOUT_USER: '/logout-stakeholder',
 }
 
 class AuthService extends ApiService {
@@ -41,7 +44,7 @@ class AuthService extends ApiService {
     this.api.removeHeaders(['Authorization'])
   }
 
-  login = async (loginData) => {
+  loginUser = async (loginData) => {
     const { data } = await this.apiClient.post(ENDPOINTS.LOGIN, loginData)
     this.createSession(loginData)
     return loginData
@@ -56,8 +59,17 @@ class AuthService extends ApiService {
     }
   }
 
-  signup = async (signupData) => {
-    await this.apiClient.post(ENDPOINTS.SIGN_UP, signupData)
+  signupUser = async (signupData) => {
+    await this.apiClient.post(ENDPOINTS.SIGN_UP_USER, signupData)
+    const { username, password } = signupData
+    return this.login({
+      username,
+      password,
+    })
+  }
+
+  signupStakeholder = async (signupData) => {
+    await this.apiClient.post(ENDPOINTS.SIGN_UP_USER, signupData)
     const { username, email, password } = signupData
     return this.login({
       username,
@@ -67,8 +79,9 @@ class AuthService extends ApiService {
   }
 
   getToken = () => {
-    const user = localStorage.getItem('user')
-    return user ? JSON.parse(user).access_token : undefined
+    let user = localStorage.getItem('user')
+    user = user ? JSON.parse(user)?.access_token : undefined
+    return user
   }
 
   getUser = () => {

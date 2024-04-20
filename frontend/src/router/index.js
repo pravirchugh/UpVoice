@@ -1,62 +1,66 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import Home from '../views/Home.vue'
-import Login from '../views/Login.vue'
-import Signup from '../views/Signup.vue'
-import CitizenSignupForm from '../views/CitizenSignup.vue';
-import InvestorSignupForm from '../views/InvestorSignup.vue';
-import InvestorLogin from '../views/InvestorLogin.vue';
-import CitizenLogin from '../views/CitizenLogin.vue';
-// import CitizenDashboard from '../views/CitizenDashboard.vue';
-// import CitizenDashboard from '../views/CitizenDashboard.vue';
-
+import {
+  createRouter,
+  createWebHashHistory,
+  createWebHistory,
+} from "vue-router";
+import Home from "../views/Home.vue";
+import Login from "../views/Login.vue";
+import Signup from "../views/Signup.vue";
+import CitizenSignupForm from "../views/CitizenSignup.vue";
+import InvestorSignupForm from "../views/InvestorSignup.vue";
+import InvestorLogin from "../views/InvestorLogin.vue";
+import CitizenLogin from "../views/CitizenLogin.vue";
+import CitizenDashboard from "../views/CitizenDashboard.vue";
+import authGuard from "../guards/AuthGuard";
+import authService from "../services/AuthService";
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: "/",
+    name: "Home",
+    component: Home,
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: Login
+    path: "/auth/login",
+    name: "Login",
+    component: Login,
   },
   {
-    path: '/signup',
-    name: 'Signup',
-    component: Signup
+    path: "/auth/signup",
+    name: "Signup",
+    component: Signup,
   },
   {
-    path: '/signup/citizen',
-    name: 'CitizenSignup',
-    component: CitizenSignupForm
+    path: "/auth/signup/citizen",
+    name: "CitizenSignup",
+    component: CitizenSignupForm,
   },
   {
-    path: '/signup/investor',
-    name: 'InvestorSignup',
-    component: InvestorSignupForm
+    path: "/auth/signup/investor",
+    name: "InvestorSignup",
+    component: InvestorSignupForm,
   },
   {
-    path: '/login/citizen',
-    name: 'CitizenLogin',
-    component: CitizenLogin
+    path: "/auth/login/citizen",
+    name: "CitizenLogin",
+    component: CitizenLogin,
   },
   {
-    path: '/login/investor',
-    name: 'InvestoLogin',
-    component: InvestorLogin
+    path: "/auth/login/investor",
+    name: "InvestoLogin",
+    component: InvestorLogin,
   },
-  // {
-  //   path: '/dashboard/citizen',
-  //   name: 'CitizenDashboard',
-  //   component: CitizenDashboard
-  // },
-
-]
+  {
+    path: "/citizen/dashboard",
+    name: "CitizenDashboard",
+    component: CitizenDashboard,
+    beforeEnter: authGuard,
+  },
+];
 
 const router = createRouter({
-  history: createWebHashHistory(),
-  routes
-})
+  history: createWebHistory(),
+  routes,
+});
 
-export default router
+export default router;
