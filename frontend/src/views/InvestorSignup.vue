@@ -28,14 +28,17 @@
     </div>
 
     <Button
+      type="submit"
       @click="handleSubmit"
       style="padding: 15px; width: 60%; font-size: 18px; border-radius: 6px; text-transform: uppercase;">
       <span style="text-align: center; width: 100%;">
         SignUp
       </span>
     </Button>
+
     <!-- <button type="submit">Sign Up</button> -->
-    <p v-if="errorMessage">{{ errorMessage }}</p>
+    <p v-if="errorMessage" style="color: red; font-size: 14px;">{{ errorMessage }}</p>
+
   </form>
 </template>
 

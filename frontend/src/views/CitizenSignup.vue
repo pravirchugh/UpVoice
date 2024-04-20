@@ -23,6 +23,7 @@
     </div> 
 
     <Button
+      type="submit"
       @click="this.performSignUp"
       style="padding: 15px; width: 60%; font-size: 18px; border-radius: 6px; text-transform: uppercase;">
       <span style="text-align: center; width: 100%;">

@@ -10,6 +10,7 @@
       <InputText id="password" v-model="password" type="password" aria-describedby="password-help"  style="width: 100%;" />
     </div>
     <Button
+      type="submit"
       @click="loginStakeholder"
       style="padding: 15px; width: 60%; font-size: 18px; border-radius: 6px; text-transform: uppercase;">
       <span style="text-align: center; width: 100%;">
