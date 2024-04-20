@@ -19,20 +19,36 @@ try:
 except Exception as e:
     print(e)
 
-@app.route('/login', methods=['POST'])
-def login():
+@app.route('/login-user', methods=['POST'])
+def login_user():
     data = request.json
     # Check if user already exists in the database
     existing_user = db.users.find_one({'username': data['username']})
     
-    if existing_user:
+    if existing_user and data['password'] == existing_user['password']:
         # Update the user's login status or set a variable indicating they are logged in
         db.users.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
         return jsonify({'message': 'User logged in successfully ' + existing_user['username']}), 200
+    elif existing_user:
+        return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
     else:
-        # Create a new user
-        db.users.insert_one({'id': data['id'], 'logged_in': True})
-        return jsonify({'message': 'New user created and logged in successfully ' + data['username']}), 201
+        return jsonify({'message': 'Account not found: ' + data['username']}), 404
+
+@app.route('/logout-user', methods=['POST'])
+def logout_user():
+    data = request.json
+    # Check if user already exists in the database
+    existing_user = db.users.find_one({'username': data['username']})
+    
+    if existing_user and data['password'] == existing_user['password']:
+        # Update the user's login status or set a variable indicating they are logged in
+        db.users.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
+        return jsonify({'message': 'User logged in successfully ' + existing_user['username']}), 200
+    elif existing_user:
+        return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
+    else:
+        return jsonify({'message': 'Account not found: ' + data['username']}), 404
+
 
 @app.route('/add-voice', methods=['POST'])
 def add_voice():
@@ -52,7 +68,7 @@ def add_voice():
     stakeholder_email = "stakeholder@stakeholder_company.com"
 
     if not user:
-        return jsonify({"message": "User does not exist"})
+        return jsonify({"message": "User does not exist"}), 404
     voice = {
         'citizen_username': username,
         'company': company,
