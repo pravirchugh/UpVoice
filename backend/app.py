@@ -92,6 +92,8 @@ def add_voice():
 
     company = data['company']
 
+    sector = data['sector']
+
     summary = data['summary']
 
     user = db.users.find_one({'username': username})
@@ -107,6 +109,7 @@ def add_voice():
     voice = {
         'citizen_username': username,
         'company': company,
+        'sector': sector,
         'stakeholder_email': stakeholder_email,
         'voice_summary': summary,
         'email': "",
