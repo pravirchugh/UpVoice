@@ -37,18 +37,53 @@ def login_user():
 @app.route('/logout-user', methods=['POST'])
 def logout_user():
     data = request.json
+    db.users.update_one({'username': data['username']}, {'$set': {'logged_in': False}})
+    '''
+    data = request.json
     # Check if user already exists in the database
     existing_user = db.users.find_one({'username': data['username']})
     
     if existing_user and data['password'] == existing_user['password']:
         # Update the user's login status or set a variable indicating they are logged in
-        db.users.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
         return jsonify({'message': 'User logged in successfully ' + existing_user['username']}), 200
     elif existing_user:
         return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
     else:
         return jsonify({'message': 'Account not found: ' + data['username']}), 404
+    '''
 
+@app.route('/login-stakeholder', methods=['POST'])
+def login_stakeholder():
+    data = request.json
+    # Check if user already exists in the database
+    existing_stakeholder = db.stakeholders.find_one({'username': data['username']})
+    
+    if existing_stakeholder and data['password'] == existing_stakeholder['password']:
+        # Update the stakeholder's login status or set a variable indicating they are logged in
+        db.stakeholders.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
+        return jsonify({'message': 'Stakeholder logged in successfully ' + existing_stakeholder['username']}), 200
+    elif existing_stakeholder:
+        return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
+    else:
+        return jsonify({'message': 'Account not found: ' + data['username']}), 404
+
+@app.route('/logout-stakeholder', methods=['POST'])
+def logout_stakeholder():
+    data = request.json
+    db.stakeholders.update_one({'username': data['username']}, {'$set': {'logged_in': False}})
+    '''
+    # Check if user already exists in the database
+    existing_stakeholder = db.stakeholders.find_one({'username': data['username']})
+    
+    if existing_stakeholder and data['password'] == existing_stakeholder['password']:
+        # Update the user's login status or set a variable indicating they are logged in
+        db.stakeholders.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
+        return jsonify({'message': 'Stakeholder logged in successfully ' + existing_stakeholder['username']}), 200
+    elif existing_stakeholder:
+        return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
+    else:
+        return jsonify({'message': 'Account not found: ' + data['username']}), 404
+    '''
 
 @app.route('/add-voice', methods=['POST'])
 def add_voice():
