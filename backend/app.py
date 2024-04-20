@@ -96,5 +96,30 @@ def add_user():
     new_user['_id'] = str(result.inserted_id)
     return jsonify({'message': 'User created successfully', 'user': new_user}), 201
 
+
+@app.route('/add-stakeholder', methods=['POST']) 
+def add_stakeholder():
+    data = request.json
+    if not data or 'username' not in data or 'email' not in data:
+        return jsonify({'error': 'Missing username or email'}), 400
+
+    # Check if the user already exists
+    if db.stakeholders.find_one({'username': data['username']}):
+        return jsonify({'error': 'Stakeholder already exists'}), 409
+
+    # Create the new user
+    new_stakeholder = {
+        'username': data['username'],
+        'email': data['email'],
+        'company': data['company'], 
+        'password': data['password'],
+        'voices': [],  # Initialize an empty list of voices
+    }
+    result = db.stakeholders.insert_one(new_stakeholder)
+    new_stakeholder['_id'] = str(result.inserted_id)
+    return jsonify({'message': 'Stakeholder created successfully', 'user': new_stakeholder}), 201
+
+#email, name, company, password, leave voices as is 
+
 if __name__ == '__main__':
     app.run(debug=True)
