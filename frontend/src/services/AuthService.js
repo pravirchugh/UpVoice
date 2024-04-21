@@ -80,7 +80,7 @@ class AuthService extends ApiService {
   signupUser = async (signupData) => {
     await this.apiClient.post(ENDPOINTS.SIGN_UP_USER, signupData);
     const { username, password } = signupData;
-    return this.login({
+    return this.loginUser({
       username,
       password,
     });
@@ -89,7 +89,7 @@ class AuthService extends ApiService {
   signupStakeholder = async (signupData) => {
     await this.apiClient.post(ENDPOINTS.SIGN_UP_USER, signupData);
     const { username, email, password } = signupData;
-    return this.login({
+    return this.loginStakeholder({
       username,
       email,
       password,

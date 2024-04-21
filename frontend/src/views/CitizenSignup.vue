@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import router from '../router';
 import authService from '../services/AuthService';
 
 export default {
@@ -50,8 +51,8 @@ export default {
     }
   },
   methods: {
-    performSignUp() {
-      const emailProvided = false
+    async performSignUp() {
+      let emailProvided = false
       if (this.email !== '') {
         emailProvided = true
       }
@@ -60,12 +61,17 @@ export default {
         return;
       }
 
-      const payload = {
+      let payload = {
         username: this.username,
         ...(emailProvided ? { email: this.email, "email_provided": emailProvided } : {}),
         password: this.password
       }
-      return authService.signupUser(payload)
+      try {
+        await authService.signupUser(payload)
+        router.push({name: 'CitizenDashboard'})
+      } catch (error) {
+        console.log(error);
+      }
     }
   },
   mounted() {

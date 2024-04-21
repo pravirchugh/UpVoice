@@ -43,6 +43,8 @@
 </template>
 
 <script>
+import router from '../router';
+
 export default {
   data() {
     return {
@@ -56,26 +58,22 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      // Basic client-side validation (you should do more thorough validation)
       if (this.password !== this.confirmPassword) {
         this.errorMessage = 'Passwords do not match.';
         return;
       }
 
       try {
-        const response = await axios.post('/add-stakeholder', { // Assuming '/add-stakeholder' is the correct route
-          username: this.name, // Assuming 'name' is used as username in the backend
+        const payload = { 
+          username: this.name, 
           company: this.companyName,
           email: this.email,
           password: this.password,
-        });
-
-        // Handle successful signup (e.g., redirect to a success page or login)
-        console.log(response.data); // Log the response for now
-        this.errorMessage = ''; // Clear any previous error message
-        // ... your success logic here ...
+        }
+        await authService.signupUser(payload)  
+        this.errorMessage = ''; 
+        router.push({name: 'InvestorDashboard'})
       } catch (error) {
-        // Handle signup errors
         console.error(error);
         this.errorMessage = 'Signup failed. Please try again.'; // Display a generic error message for now
       }
