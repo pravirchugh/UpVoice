@@ -2,12 +2,14 @@ import sys
 print(sys.executable)
 
 from flask import Flask, request, jsonify
+from flask_jwt_extended import create_access_token, JWTManager, jwt_required, get_jwt_identity
+
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
-from datetime import datetime
+from datetime import timedelta
 
 import os
 from sendgrid import SendGridAPIClient
@@ -43,6 +45,12 @@ try:
 except Exception as e:
     print(e)
 
+
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)  # define the life span of the token
+
+jwt = JWTManager(app) # initialize JWTManager
+
 @app.route('/login-user', methods=['POST'])
 def login_user():
     data = request.json
@@ -51,22 +59,25 @@ def login_user():
     
     if existing_user and hashlib.sha256(data["password"].encode("utf-8")).hexdigest() == existing_user['password']:
         # Update the user's login status or set a variable indicating they are logged in
-        db.users.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
-        return jsonify({'message': 'User logged in successfully ' + existing_user['username']}), 200
+        access_token = create_access_token(identity=existing_user['username']) # create jwt token
+        return jsonify(access_token=access_token), 200
     elif existing_user:
         return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
     else:
         return jsonify({'message': 'Account not found: ' + data['username']}), 404
 
 @app.route('/logout-user', methods=['POST'])
+@jwt_required()
 def logout_user():
     data = request.json
 
-    logged_in_user = db.users.find_one({'logged_in': True})
+    # Invalidate the JWT
+    current_user = get_jwt_identity() # Get the identity of the current user
+    logged_in_user = db.users.find_one({'username' : current_user})
 
     if not logged_in_user:
         return jsonify({'message': 'User not logged in, thus cannot be logged out: '}), 404
-    else:
+    else: # TODO
         db.users.update_one({'username': logged_in_user['username']}, {'$set': {'logged_in': False}})
         return jsonify({'message': 'User Logged out successfully: ' + logged_in_user['username']}), 200
         # data['username']
@@ -92,22 +103,24 @@ def login_stakeholder():
     
     if existing_stakeholder and hashlib.sha256(data["password"].encode("utf-8")).hexdigest() == existing_stakeholder['password']:
         # Update the stakeholder's login status or set a variable indicating they are logged in
-        db.stakeholders.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
-        return jsonify({'message': 'Stakeholder logged in successfully ' + existing_stakeholder['username']}), 200
+        access_token = create_access_token(identity=existing_stakeholder['username']) # create jwt token
+        return jsonify(access_token=access_token), 200
     elif existing_stakeholder:
         return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
     else:
         return jsonify({'message': 'Account not found: ' + data['username']}), 404
 
-@app.route('/logout-stakeholder', methods=['POST'])
+@app.route('/logout-stakeholder', methods=['POST'], endpoint='logout_stakeholder')
+@jwt_required()
 def logout_stakeholder():
     data = request.json
 
-    logged_in_stakeholder = db.stakeholders.find_one({'logged_in': True})
+    current_stakeholder = get_jwt_identity() # Get the identity of the current user
+    logged_in_stakeholder = db.stakeholders.find_one({'username' : current_stakeholder})
 
     if not logged_in_stakeholder:
         return jsonify({'message': 'User not logged in, thus cannot be logged out: '}), 404
-    else:
+    else: # TODO
         db.users.update_one({'username': logged_in_stakeholder['username']}, {'$set': {'logged_in': False}})
         return jsonify({'message': 'User Logged out successfully: ' + logged_in_stakeholder['username']}), 200
     '''
@@ -181,8 +194,10 @@ def add_stakeholder():
 #email, name, company, password, leave voices as is 
 
 @app.route('/view-user-voices', methods=['POST'])
+@jwt_required()
 def view_user_voices():
-    user = db.users.find_one({'logged_in': True})
+    current_user = get_jwt_identity() # Get the identity of the current user
+    user = db.users.find_one({'username' : current_user})
     
     if not user:
         return jsonify({'message': 'No user currently logged in'}), 404
@@ -202,15 +217,18 @@ def view_user_voices():
         'subject': voice['subject'],
         'urgency': voice['urgency'],
         'sector': voice['sector'],
-        'status': voice['status']
+        'status': voice['status'],
+        'id': voice['_id']
     } for voice in voices]
     
     return jsonify({'user': user['username'], 'voices': voices_list}), 200
 
 
 @app.route('/view-stakeholder-voices', methods=['POST'])
+@jwt_required()
 def view_stakeholder_voices():
-    stakeholder = db.stakeholders.find_one({'logged_in': True})
+    current_stakeholder = get_jwt_identity() # Get the identity of the current user
+    stakeholder = db.stakeholders.find_one({'email' : current_stakeholder})
     
     if not stakeholder:
         return jsonify({'message': 'No stakeholder currently logged in'}), 404
@@ -229,12 +247,14 @@ def view_stakeholder_voices():
         'subject': voice['subject'],
         'urgency': voice['urgency'],
         'sector': voice['sector'],
-        'status': voice['status']
+        'status': voice['status'],
+        'id': voice['_id']
     } for voice in voices]
     
     return jsonify({'stakeholder': stakeholder['email'], 'voices': voices_list}), 200
 
 @app.route('/delete-voice', methods=['DELETE'])
+@jwt_required()
 def delete_voice():
     data = request.json
     voice_id = data.get('id')
@@ -257,6 +277,7 @@ def delete_voice():
     return jsonify({'message': 'Voice deleted successfully'}), 200
 
 @app.route('/change-voice-status', methods=['POST'])
+@jwt_required()
 def change_voice_status():
     data = request.json
     voice_id = data.get('id')
@@ -304,17 +325,20 @@ def change_voice_status():
     return jsonify({'message': 'Voice status updated successfully'}), 200
 
 @app.route('/add-voice', methods=['POST'])
+@jwt_required()
 def add_voice():
+
+    current_user = get_jwt_identity() # Get the identity of the current user
+    user = db.users.find_one({'username' : current_user})
+
     data = request.json
-    username = data['username']
+    username = user['username']
 
     company = data['company']
 
     sector = data['sector']
 
     summary = data['summary']
-
-    user = db.users.find_one({'username': username})
 
     # Find the associated email to send it to (based on the company!)
     stakeholder = db.stakeholders.find_one({'company': company})
