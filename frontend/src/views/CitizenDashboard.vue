@@ -1,11 +1,9 @@
 <template>
-<div class="card flex justify-content-center">
-    <Sidebar v-model:visible="visible" header="Sidebar">
-        <p>Raise Issue</p>
-    </Sidebar>
-    <!-- <Button icon="pi pi-arrow-right" @click="visible = true" /> -->
+  <!-- <div> -->
+  <div class="dashboard-link">
+      <router-link to="/citizen/dashboard" :class="{ active: activeLink === 'Requests raised' }" @click="setActiveLink('citizens/dashboard')">Requests received</router-link>
+    <router-link to="/citizen/visualization" :class="{ active: activeLink === 'Visualizations' }" @click="setActiveLink('Visualizations')">Visualizations</router-link>
 </div>
-<Button icon="pi pi-plus" @click="visible = true" />
   <div class="form-container">
     <h2>Raise your voice</h2>
     <div class="form-row">
@@ -31,35 +29,15 @@
   </div>
 </template>
 
-<!-- <template>
-  <div class="p-grid p-dir-col">
-    <div class="p-col">
-      <h2>Raise your voice</h2>
-    </div>
-    <div class="p-col">
-      <label for="category">Category:</label>
-      <Dropdown :options="categoryOptions" v-model="selectedCategory" placeholder="Select a category" @change="onCategoryChange" />
-    </div>
-    <div class="p-col">
-      <label for="company">Choose company:</label>
-      <Dropdown :options="companyOptions" v-model="selectedCompany" placeholder="Select a company" />
-    </div>
-    <div class="p-col">
-      <label for="issue">Issue:</label>
-      <Textarea id="issue" v-model="issue" rows="2" :autoResize="true" />
-    </div>
-    <div class="p-col">
-      <label for="emailPrompt">Email prompt:</label>
-      <Textarea id="emailPrompt" v-model="emailPrompt" disabled />
-    </div>
-    <div class="p-col">
-      <Button label="Send" @click="submitForm" />
-    </div>
-  </div>
-</template> -->
-
-
 <script>
+
+import DashboardNav from '../components/DashboardNav.vue'; 
+
+export default {
+  components: {
+    DashboardNav
+  }
+};
 // export default {
 //   components: {
 //     Dropdown,
@@ -163,4 +141,27 @@ label {
 .p-button:hover {
   background-color: #470f71;
 }
+
+
+.dashboard-link {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px; /* Adjust as needed */
+  margin-bottom: 20px;
+}
+
+.dashboard-link a {
+  margin: 0 10px;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  background-color: #551a8b; /* Change color as needed */
+  color: #fff;
+}
+
+.dashboard-link a.active {
+  background-color: #551a8b; /* Change color for active link */
+}
+
+
 </style>

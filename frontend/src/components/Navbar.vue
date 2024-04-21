@@ -10,8 +10,10 @@
         <router-link v-if="!isLoggedIn()" to="/auth/login" class="navbar-item" style="font-weight: 500;">Login</router-link>
         <router-link v-if="isLoggedIn() && $route.name !== 'CitizenDashboard'" to="/citizen/dashboard"
           class="navbar-item" style="font-weight: 500;">Citizen dashboard</router-link>
+         <router-link v-if="isLoggedIn() && $route.name !== 'InvestorDashboard'" to="/investor/dashboard"
+          class="navbar-item" style="font-weight: 500;">Investor dashboard</router-link>  
         <router-link v-if="isLoggedIn()">
-          <button @click="logoutUser" role="link" style="margin: 0px 15px; font-weight: 500">
+          <button @click="logoutUser" role="link" style="margin: 0px 15px; font-weight: 500; background-color: #551a8b; padding: 10px; color:white; border-radius: 5px; width: auto">
             Logout
           </button>
         </router-link>
