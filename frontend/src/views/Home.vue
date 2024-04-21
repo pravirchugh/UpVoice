@@ -14,6 +14,17 @@
       </div>
     </div>
   </div>
+  <div class="info">
+    <img src="../assets/home/megaphone.jpg" alt="megaphone image" class="mega">
+    <div class="info-body">
+      <h1>What we do</h1>
+       <p>If you are a citizen - Raise issues which have been ignored by  </p>
+       <p>If you are a investor - See where your organization is lacking, optemize profits!</p>
+    </div>
+  </div>
+  <div class="footer">
+    <p>&copy; 2024 UpVoice. LAHacks 24'.</p>
+  </div>
 </template>
 
 <script>
@@ -38,6 +49,14 @@ export default {
   position: relative;
 }
 
+.info{
+  display: flex;
+}
+
+.mega{
+  width: 800px;
+}
+
 .background {
   position: absolute;
   top: 0;
@@ -45,7 +64,8 @@ export default {
   width: 100%;
   height: 100%;
   background-image: url("../assets/home/plane_two.jpg");
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
   background-position: top center;
   animation: slideFromBottom 2s forwards;
   z-index: -1; /* Set z-index to -1 to position the background behind other content */
@@ -69,6 +89,14 @@ export default {
 
 h1 {
   margin-left: 50px;
+}
+
+.footer {
+  border-top: 0.5px solid black;
+  text-align: center;
+  padding: 20px 0;
+  background-color: #f8f9fa;
+  color: #6c757d;
 }
 
 @keyframes slideFromBottom {
