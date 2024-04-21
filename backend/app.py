@@ -31,26 +31,10 @@ else:
 
 app = Flask(__name__)
 
-uri = "mongodb+srv://pravirc:pravirc1@cluster0.o07b6ry.mongodb.net/?retryWrites=true&w=majority"
+uri = os.getenv('MONGODB_URI')
 
 client = MongoClient(uri)
 db = client['upvoice']
-
-message = Mail(
-    from_email=os.getenv('SENDGRID_FROM_EMAIL'),
-    to_emails="pravirchugh@yahoo.com",
-    subject='Subject line from LLM here ' + "business",
-    html_content='<h1>Title for Email</h1> <br> <strong>Line of Emphasis Here</strong> Please do not reply to this email.')
-try:
-    sg = SendGridAPIClient(os.environ['SENDGRID_API_KEY'])
-    response = sg.send(message)
-    print(response.status_code)
-    print(response.body)
-    print(response.headers)
-    print("SUCCESS!")
-except Exception as e:
-    print("EXCEPTION!")
-    print(str(e))
 
 # Send a ping to confirm a successful connection
 try:
