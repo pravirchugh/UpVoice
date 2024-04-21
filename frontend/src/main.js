@@ -13,6 +13,7 @@ import RadioButton from 'primevue/radiobutton';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
+import Textarea from 'primevue/textarea'
 
 
 const app = createApp(App)
@@ -28,5 +29,6 @@ app.component('RadioButton', RadioButton)
 app.component('DataTable', DataTable)
 app.component('Column', Column)
 app.component('Tag', Tag);
+app.component('Textarea', Textarea)
 
 app.mount('#app')

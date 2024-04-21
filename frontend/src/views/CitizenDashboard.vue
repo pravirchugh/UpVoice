@@ -13,11 +13,11 @@
     </div>
     <div class="form-row">
       <label for="company">Choose company:</label>
-      <Dropdown :options="companyOptions" v-model="selectedCompany" placeholder="Select a company" />
+      <Dropdown :options="companyOptions" optionLabel="name" v-model="selectedCompany" placeholder="Select a company" style="width: 100%;" />
     </div>
     <div class="form-row">
       <label for="issue">Issue:</label>
-      <Textarea id="issue" style="width: 100%; border-radius: 6px; border-color: #cbd5e1; padding: 5px;" v-model="issue" rows="5" :autoResize="true" />
+      <Textarea id="issue" v-model="userIssue" style="width: 100%; border-radius: 6px; border-color: #cbd5e1; padding: 5px;" rows="5" :autoResize="true" />
     </div>
     <!-- <div class="form-row">
       <label for="emailPrompt">Email prompt:</label>
@@ -38,19 +38,45 @@ export default {
   components: {
     DashboardNav
   },
+  data(){
+    return {
+      userIssue: '',
+      companyOptions: [],
+      selectedCompany: null,
+      categoryOptions: [],
+      selectedCategory: null,
+    }
+  },
   methods: {
     async fetchCompanies() {
       try {
-        const companies = await citizenDashboardService.fetchCompanies();
-        console.log(companies);
+        const {data} = await citizenDashboardService.fetchCompanies();
+        this.companyOptions = data;
       } catch (error) {
         console.log(error);
       }
     },
     async fetchCompanyCategories() {
       try {
-        const categories = await citizenDashboardService.fetchCompanyCategories();
-        console.log(categories);
+        const {data} = await citizenDashboardService.fetchCompanyCategories();
+        this.categoryOptions = data
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async submitForm() {
+      try {
+        console.log(this.userIssue);
+        const payload = {
+          category: this.selectedCategory,
+          company: this.selectedCompany.name,
+          issue: this.userIssue
+        }
+        const {data} = await citizenDashboardService.raiseVoice(payload)
+
+        this.userIssue = ''
+        this.selectedCategory = null
+        this.selectedCompany = null
       } catch (error) {
         console.log(error);
       }
