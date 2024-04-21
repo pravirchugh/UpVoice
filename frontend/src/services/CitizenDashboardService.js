@@ -3,7 +3,8 @@ import ApiService from "./ApiService";
 const ENDPOINTS = {
   FETCH_COMPANIES: "common/fetch-company-list",
   FETCH_COMPANIES_CATEGORIES: "common/fetch-company-categories",
-  RAISE_A_VOICE: "user/raise-a-voice"
+  RAISE_A_VOICE: "user/raise-a-voice",
+  SEND_AN_EMAIL: "voice/add-voice"
 };
 
 class CitizenDashboardService extends ApiService {
@@ -23,6 +24,11 @@ class CitizenDashboardService extends ApiService {
 
   raiseVoice = async (payload) => {
     const {data} = await this.apiClient.post(ENDPOINTS.RAISE_A_VOICE, payload)
+    return data
+  }
+
+  sendEmail = async (payload) => {
+    const {data} = await this.apiClient.post(ENDPOINTS.SEND_AN_EMAIL, payload)
     return data
   }
 }

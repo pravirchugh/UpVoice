@@ -60,7 +60,7 @@ class AuthService extends ApiService {
   };
 
   logoutUser = async () => {
-    const { data } = await this.apiClient.post(ENDPOINTS.LOGOUT_USER);
+    const { data } = await this.apiClient.post(ENDPOINTS.LOGOUT_USER, {});
     this.destroySession();
     return {
       ok: true,
@@ -87,7 +87,7 @@ class AuthService extends ApiService {
   };
 
   signupStakeholder = async (signupData) => {
-    await this.apiClient.post(ENDPOINTS.SIGN_UP_USER, signupData);
+    await this.apiClient.post(ENDPOINTS.SIGN_UP_STAKEHOLDER, signupData);
     const { username, email, password } = signupData;
     return this.loginStakeholder({
       username,

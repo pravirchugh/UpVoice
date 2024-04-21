@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import router from '../router';
 import authService from '../services/AuthService'
 export default {
   data() {
@@ -24,12 +25,17 @@ export default {
     }
   },
   methods: {
-    loginUser() {
-      const payload = {
-        username: this.username,
-        password: this.password
+    async loginUser() {
+      try {
+        const payload = {
+          username: this.username,
+          password: this.password
+        }
+        await authService.loginUser(payload); 
+        router.push({name: 'CitizenDashboard'})
+      } catch (error) {
+        console.log(error);
       }
-      authService.loginUser(payload);
     }
   }
 }

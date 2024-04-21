@@ -1,6 +1,6 @@
 <template>
     <div class="dashboard-link">
-      <router-link to="/citizen/dashboard" :class="{ active: activeLink === 'Requests raised' }" @click="setActiveLink('citizens/dashboard')">Requests received</router-link>
+      <router-link to="/citizen/dashboard" :class="{ active: activeLink === 'Raise requests' }" @click="setActiveLink('citizens/dashboard')">Raise requests</router-link>
       <router-link to="/citizen/visualization" :class="{ active: activeLink === 'Visualizations' }" @click="setActiveLink('Visualizations')">Visualizations</router-link>
     </div>
     <!-- <h1>Visualization</h1> -->

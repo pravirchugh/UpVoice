@@ -7,6 +7,7 @@ from app.model import db
 import google.generativeai as genai
 import os
 import numpy as np
+from app.api.voice import add_voice
 
 user = Blueprint("user", __name__, url_prefix='/user')
 
@@ -107,7 +108,12 @@ def raise_a_voice():
 
     return jsonify({
         "status": True,
-        "message": 'Voice raised successfully'
+        "message": 'Voice raised successfully',
+        "data": {
+            "company": company,
+            "sector": category,
+            "summary": response.text
+        }
     })
 
 

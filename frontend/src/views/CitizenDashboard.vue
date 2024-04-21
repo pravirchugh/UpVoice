@@ -1,7 +1,7 @@
 <template>
   <!-- <div> -->
   <div class="dashboard-link">
-      <router-link to="/citizen/dashboard" :class="{ active: activeLink === 'Requests raised' }" @click="setActiveLink('citizens/dashboard')">Requests received</router-link>
+      <router-link to="/citizen/dashboard" :class="{ active: activeLink === 'Raise requests' }" @click="setActiveLink('citizens/dashboard')">Raise requests</router-link>
     <router-link to="/citizen/visualization" :class="{ active: activeLink === 'Visualizations' }" @click="setActiveLink('Visualizations')">Visualizations</router-link>
 </div>
   <div class="form-container">
@@ -77,6 +77,14 @@ export default {
         this.userIssue = ''
         this.selectedCategory = null
         this.selectedCompany = null
+
+        const emailPayload = {
+          company: data['company'],
+          sector: data['sector'],
+          summary: data['summary']
+        }
+
+        const response = await citizenDashboardService.sendEmail(emailPayload)
       } catch (error) {
         console.log(error);
       }

@@ -8,7 +8,7 @@
     </div>
 
     <div class="flex flex-column gap-2" style="width: 100%;margin: 10px 0px;">
-      <label for="companyName">Name</label>
+      <label for="companyName">Company Name</label>
       <InputText id="companyName" v-model="companyName" style="width: 100%;" />
     </div>
 
@@ -44,6 +44,7 @@
 
 <script>
 import router from '../router';
+import authService from '../services/AuthService';
 
 export default {
   data() {
@@ -70,7 +71,7 @@ export default {
           email: this.email,
           password: this.password,
         }
-        await authService.signupUser(payload)  
+        await authService.signupStakeholder(payload)  
         this.errorMessage = ''; 
         router.push({name: 'InvestorDashboard'})
       } catch (error) {
