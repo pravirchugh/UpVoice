@@ -82,7 +82,12 @@ export default {
       window.location.reload();
     },
     async logoutUser() {
-      await authService.logoutUser();
+      if(this.userType === 'citizen') {
+        await authService.logoutUser();
+      } else {
+        await authService.logoutStakeholder();
+      }
+      
       this.reloadPage()
     },
     fetchReputation() {

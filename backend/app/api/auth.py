@@ -129,7 +129,7 @@ def add_stakeholder():
     return jsonify(access_token=access_token), 200
 
 
-@auth.route('/logout-stakeholder', methods=['POST'], endpoint='logout_stakeholder')
+@auth.route('/logout-stakeholder', methods=['POST'])
 @jwt_required()
 def logout_stakeholder():
     data = request.json

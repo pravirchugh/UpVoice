@@ -1,38 +1,37 @@
 <template>
-<div class="dashboard-link">
-      <router-link to="/investor/dashboard" :class="{ active: activeLink === 'Requests received' }" @click="setActiveLink('investor/dashboard')">Requests received</router-link>
-    <router-link to="/investor/visualization" :class="{ active: activeLink === 'Visualizations' }" @click="setActiveLink('Visualizations')">Visualizations</router-link>
-</div>
+  <div class="dashboard-link">
+    <router-link to="/investor/dashboard" :class="{ active: activeLink === 'Requests received' }"
+      @click="setActiveLink('investor/dashboard')">Requests received</router-link>
+    <router-link to="/investor/visualization" :class="{ active: activeLink === 'Visualizations' }"
+      @click="setActiveLink('Visualizations')">Visualizations</router-link>
+  </div>
   <div class="investor-requests">
     <h2>Requests Raised by Citizens</h2>
     <div class="card no-hover">
       <DataTable :value="requests" :editingRows="editingRows" dataKey="id" @row-edit-save="onRowEditSave" stripedRows>
-      <Column field="id" header="Request ID" style="width: 15%"></Column>
-      <Column field="citizenName" header="Citizen Name" style="width: 20%"></Column>
-      <Column field="category" header="Category" style="width: 20%"></Column>
-      <Column field="description" header="Description" style="width: 30%"></Column>
-      <Column field="status" header="Status" style="width: 15%">
-  <template #body="slotProps">
-    <template v-if="slotProps.editing">
-      <Dropdown v-model="slotProps.data[slotProps.field]" 
-                :options="statuses" 
-                optionLabel="label" 
-                optionValue="value" 
-                placeholder="Select a Status">
-        <template #option="optionProps">
-          <Tag :value="optionProps.option.value" :severity="getStatusLabel(optionProps.option.value)" />
-        </template>
-      </Dropdown>
-    </template>
-    <template v-else>
-      <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
-    </template>
-  </template>
-  <template #editor="slotProps">
-    <Button icon="pi pi-pencil" class="p-button-rounded p-button-text" @click="slotProps.toggleEdit()"/> 
-  </template>
-</Column>
-    </DataTable>
+        <Column field="id" header="Request ID" style="width: 15%"></Column>
+        <Column field="citizenName" header="Citizen Name" style="width: 20%"></Column>
+        <Column field="category" header="Category" style="width: 20%"></Column>
+        <Column field="description" header="Description" style="width: 30%"></Column>
+        <Column field="status" header="Status" style="width: 15%">
+          <template #body="slotProps">
+            <template v-if="slotProps.editing">
+              <Dropdown v-model="slotProps.data[slotProps.field]" :options="statuses" optionLabel="label"
+                optionValue="value" placeholder="Select a Status">
+                <template #option="optionProps">
+                  <Tag :value="optionProps.option.value" :severity="getStatusLabel(optionProps.option.value)" />
+                </template>
+              </Dropdown>
+            </template>
+            <template v-else>
+              <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
+            </template>
+          </template>
+          <template #editor="slotProps">
+            <Button icon="pi pi-pencil" class="p-button-rounded p-button-text" @click="slotProps.toggleEdit()" />
+          </template>
+        </Column>
+      </DataTable>
     </div>
   </div>
 </template>
@@ -47,7 +46,7 @@ export default {
     DataTable,
     Column
   },
-    data() {
+  data() {
     return {
       activeLink: 'Requests received'
     };
@@ -142,7 +141,8 @@ export default {
 .dashboard-link {
   display: flex;
   justify-content: center;
-  margin-top: 50px; /* Adjust as needed */
+  margin-top: 50px;
+  /* Adjust as needed */
 }
 
 .dashboard-link a {
@@ -150,12 +150,14 @@ export default {
   padding: 10px 20px;
   text-decoration: none;
   border-radius: 5px;
-  background-color: #551a8b; /* Change color as needed */
+  background-color: #551a8b;
+  /* Change color as needed */
   color: #fff;
 }
 
 .dashboard-link a.active {
-  background-color: #551a8b; /* Change color for active link */
+  background-color: #551a8b;
+  /* Change color for active link */
 }
 
 .card {
@@ -173,6 +175,11 @@ export default {
 
 .p-datatable {
   border: none;
-  margin-top: 20px; 
+  margin-top: 20px;
+}
+
+no-hover:hover {
+  transform: none !important;
+  transition: none !important;
 }
 </style>
