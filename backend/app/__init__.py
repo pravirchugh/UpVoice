@@ -11,7 +11,12 @@ from app.api.stakeholder import stakeholder
 from app.api.user import user
 from app.api.voice import voice
 
-from flask_jwt_extended import create_access_token, JWTManager, jwt_required, get_jwt_identity
+from flask_jwt_extended import (
+    create_access_token, JWTManager, jwt_required, 
+    get_jwt_identity, create_refresh_token, 
+    jwt_refresh_token_required, get_raw_jwt
+)
+
 from datetime import timedelta
 
 def create_app(**config_overrides):
@@ -34,8 +39,12 @@ def create_app(**config_overrides):
     # Initializing with JWT
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)  # define the life span of the token
+    app.config['JWT_BLACKLIST_ENABLED'] = True
+    app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
     jwt = JWTManager(app) # initialize JWTManager
+
+    blacklist = set()
 
     api.register_blueprint(stakeholder)
     api.register_blueprint(user)
