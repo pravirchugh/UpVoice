@@ -95,7 +95,11 @@ def add_user():
     
     result = db.users.insert_one(new_user)
     new_user['_id'] = str(result.inserted_id)
-    return jsonify({'message': 'User created successfully', 'user': new_user}), 201
+    print("User Created Successfully")
+
+    access_token = create_access_token(identity=new_user['username']) # create jwt token
+    return jsonify(access_token=access_token), 200
+    # return jsonify({'message': 'User created successfully', 'user': new_user}), 201
 
 @auth.route('/add-stakeholder', methods=['POST']) 
 def add_stakeholder():
@@ -120,7 +124,9 @@ def add_stakeholder():
 
     result = db.stakeholders.insert_one(new_stakeholder)
     new_stakeholder['_id'] = str(result.inserted_id)
-    return jsonify({'message': 'Stakeholder created successfully', 'user': new_stakeholder}), 201
+    access_token = create_access_token(identity=new_stakeholder['username']) # create jwt token with EMAIL (part of the VOICE object)
+    return jsonify(access_token=access_token), 200
+
 
 @auth.route('/logout-stakeholder', methods=['POST'], endpoint='logout_stakeholder')
 @jwt_required()

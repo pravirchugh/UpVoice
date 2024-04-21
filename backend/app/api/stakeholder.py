@@ -19,7 +19,7 @@ stakeholder = Blueprint("stakeholder", __name__, url_prefix='/stakeholder')
 @jwt_required()
 def view_stakeholder_voices():
     current_stakeholder = get_jwt_identity() # Get the identity of the current user
-    stakeholder = db.stakeholders.find_one({'email' : current_stakeholder})
+    stakeholder = db.stakeholders.find_one({'username' : current_stakeholder})
     
     if not stakeholder:
         return jsonify({'message': 'No stakeholder currently logged in'}), 404
