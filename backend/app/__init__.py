@@ -10,6 +10,7 @@ from app.api.auth import auth
 from app.api.stakeholder import stakeholder
 from app.api.user import user
 from app.api.voice import voice
+from app.api.common import common
 
 from flask_jwt_extended import create_access_token, JWTManager, jwt_required, get_jwt_identity
 from datetime import timedelta
@@ -31,12 +32,16 @@ def create_app(**config_overrides):
     else:
         print("found the api key")
 
+<<<<<<< Updated upstream
     # Initializing with JWT
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)  # define the life span of the token
 
     jwt = JWTManager(app) # initialize JWTManager
 
+=======
+    api.register_blueprint(common)
+>>>>>>> Stashed changes
     api.register_blueprint(stakeholder)
     api.register_blueprint(user)
     api.register_blueprint(voice)

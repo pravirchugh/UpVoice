@@ -35,3 +35,4 @@ def view_user_voices():
     } for voice in voices]
     
     return jsonify({'user': user['username'], 'voices': voices_list}), 200
+

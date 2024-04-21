@@ -32,58 +32,35 @@
 <script>
 
 import DashboardNav from '../components/DashboardNav.vue'; 
+import citizenDashboardService from '../services/CitizenDashboardService';
 
 export default {
   components: {
     DashboardNav
+  },
+  methods: {
+    async fetchCompanies() {
+      try {
+        const companies = await citizenDashboardService.fetchCompanies();
+        console.log(companies);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async fetchCompanyCategories() {
+      try {
+        const categories = await citizenDashboardService.fetchCompanyCategories();
+        console.log(categories);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  },
+  mounted() {
+    this.fetchCompanies()
+    this.fetchCompanyCategories()
   }
 };
-// export default {
-//   components: {
-//     Dropdown,
-//     Textarea,
-//     InputText,
-//     Button
-//   },
-//   data() {
-//     return {
-//       categoryOptions: [
-//         { label: 'Industry 1', value: 'industry1' },
-//         { label: 'Industry 2', value: 'industry2' },
-//         // Add more industry options as needed
-//       ],
-//       companyOptions: [],
-//       selectedCategory: null,
-//       selectedCompany: null,
-//       issue: '',
-//       emailPrompt: ''
-//     };
-//   },
-//   methods: {
-//     onCategoryChange() {
-//       // Simulate fetching company data based on selected category
-//       // Replace this with actual API call to fetch companies based on category
-//       if (this.selectedCategory === 'industry1') {
-//         this.companyOptions = [
-//           { label: 'Company A', value: 'companyA' },
-//           { label: 'Company B', value: 'companyB' },
-//           // Add more company options for industry 1
-//         ];
-//       } else if (this.selectedCategory === 'industry2') {
-//         this.companyOptions = [
-//           { label: 'Company X', value: 'companyX' },
-//           { label: 'Company Y', value: 'companyY' },
-//           // Add more company options for industry 2
-//         ];
-//       }
-//     },
-//     submitForm() {
-//       // Submit form logic goes here
-//       console.log('Form submitted!');
-//       // You can send form data to the backend or perform other actions here
-//     }
-//   }
-// };
 </script>
 
 <style scoped>
