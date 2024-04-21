@@ -1,6 +1,7 @@
 sendgrid.env
-<<<<<<< Updated upstream
 sendEmail.py
-=======
 .env
->>>>>>> Stashed changes
+__pycache__
+*.py[cod]
+*$py.class
+migrations/
