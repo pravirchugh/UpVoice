@@ -11,9 +11,15 @@ from bson.errors import InvalidId
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
+import google.generativeai as genai
+
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 stakeholder = Blueprint("stakeholder", __name__, url_prefix='/stakeholder')
+
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-pro')
 
 @stakeholder.route('/view-stakeholder-voices', methods=['POST'])
 @jwt_required()
@@ -75,11 +81,19 @@ def change_voice_status():
     {'_id': oid}
     )
 
+    # Call Gemini here to fill out the email, subject -> notification that the voice changed status
+    email_body = model.generate_content("Generate an email notification, in HTML format with HTML elements from an investor of " + voice['company'] + " to a citizen who had a complaint against the company. The summary of the complaint was: " + voice['subject'] + " . The status of the complaint has changed to: " + new_status + " . Do not return any other information besides the email in HTML format. ")
+    print(email_body.text)
+
+    email_subject = "Status Change: Your voice is now: " + new_status
+    
+
+
     message = Mail(
     from_email=os.getenv('SENDGRID_FROM_EMAIL'),
     to_emails=voice['stakeholder_email'],
-    subject='Status of voice changed to: ' + voice['status'],
-    html_content='<h1>Title for Email</h1> <br> <strong>Line of Emphasis Here</strong> Please do not reply to this email.')
+    subject=email_subject,
+    html_content=email_body.text[7:] + " Please do not reply to this email.")
     try:
         sg = SendGridAPIClient(os.environ['SENDGRID_API_KEY'])
         response = sg.send(message)

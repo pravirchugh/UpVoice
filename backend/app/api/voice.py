@@ -2,6 +2,8 @@ import json
 import os
 import pandas as pd
 
+import google.generativeai as genai
+
 from flask import Blueprint, request, jsonify
 from flask import current_app as app
 from app.model import db
@@ -14,6 +16,11 @@ from sendgrid.helpers.mail import Mail
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 voice = Blueprint("voice", __name__, url_prefix='/voice')
+
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-pro')
+
 
 @voice.route('/delete-voice', methods=['DELETE'])
 @jwt_required()
@@ -80,13 +87,18 @@ def add_voice():
     }
 
     # Call Gemini here to fill out the email, subject and urgency (50 is just the default)
+    email_body = model.generate_content("Generate an email complaint, in HTML format with HTML elements from a citizen to an investor at " + company + ". The category of the issue is " + sector + ". Please include and expand on this summary of the citizen's grievance: " + summary + ". Do not include any placeholders AT ALL, and do not make personal requests. Instead, make emotional calls to action for the company as a whole. Do not return any other information besides the email in HTML format. ")
+    print(email_body.text)
+
+    email_subject = model.generate_content("Generate an email complaint from a citizen to an investor at " + company + ". The category of the issue is " + sector + ". Please include and expand on this summary of the citizen's grievance: " + summary + ". Return ONLY the subject of the email, nothing else.")
+    print(email_subject.text)
 
     # use Sendgrid/Fetch in this endpoint to send the email
     message = Mail(
     from_email=os.getenv('SENDGRID_FROM_EMAIL'),
     to_emails=voice['stakeholder_email'],
-    subject='Subject line from LLM here ' + sector,
-    html_content='<h1>Title for Email</h1> <br> <strong>Line of Emphasis Here</strong> Please do not reply to this email.')
+    subject=email_subject.text,
+    html_content=email_body.text[7:] + ' Please do not reply to this email.')
     print(voice['stakeholder_email'])
     try:
         sg = SendGridAPIClient(os.environ['SENDGRID_API_KEY'])
@@ -98,6 +110,18 @@ def add_voice():
     except Exception as e:
         print("EXCEPTION!")
         print(str(e))
+
+    voice = {
+        'citizen_username': username,
+        'company': company,
+        'sector': sector,
+        'stakeholder_email': stakeholder_email,
+        'voice_summary': summary,
+        'email': email_body.text[7:],
+        'subject': email_subject.text,
+        'urgency': 50,
+        'status': "unresolved"
+    }
 
     # Store into collection called voices
     db.voices.insert_one(voice)
