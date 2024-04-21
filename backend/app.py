@@ -13,8 +13,12 @@ import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
+import hashlib
+
 from dotenv import load_dotenv
 import os
+
+
 
 load_dotenv("sendgrid.env")  # This loads the .env file at the path given, or default to the .env file in the same directory as the script.
 
@@ -32,6 +36,22 @@ uri = "mongodb+srv://pravirc:pravirc1@cluster0.o07b6ry.mongodb.net/?retryWrites=
 client = MongoClient(uri)
 db = client['upvoice']
 
+message = Mail(
+    from_email=os.getenv('SENDGRID_FROM_EMAIL'),
+    to_emails="pravirchugh@yahoo.com",
+    subject='Subject line from LLM here ' + "business",
+    html_content='<h1>Title for Email</h1> <br> <strong>Line of Emphasis Here</strong> Please do not reply to this email.')
+try:
+    sg = SendGridAPIClient(os.environ['SENDGRID_API_KEY'])
+    response = sg.send(message)
+    print(response.status_code)
+    print(response.body)
+    print(response.headers)
+    print("SUCCESS!")
+except Exception as e:
+    print("EXCEPTION!")
+    print(str(e))
+
 # Send a ping to confirm a successful connection
 try:
     client.admin.command('ping')
@@ -45,7 +65,7 @@ def login_user():
     # Check if user already exists in the database
     existing_user = db.users.find_one({'username': data['username']})
     
-    if existing_user and data['password'] == existing_user['password']:
+    if existing_user and hashlib.sha256(data["password"].encode("utf-8")).hexdigest() == existing_user['password']:
         # Update the user's login status or set a variable indicating they are logged in
         db.users.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
         return jsonify({'message': 'User logged in successfully ' + existing_user['username']}), 200
@@ -86,7 +106,7 @@ def login_stakeholder():
     # Check if user already exists in the database
     existing_stakeholder = db.stakeholders.find_one({'username': data['username']})
     
-    if existing_stakeholder and data['password'] == existing_stakeholder['password']:
+    if existing_stakeholder and hashlib.sha256(data["password"].encode("utf-8")).hexdigest() == existing_stakeholder['password']:
         # Update the stakeholder's login status or set a variable indicating they are logged in
         db.stakeholders.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
         return jsonify({'message': 'Stakeholder logged in successfully ' + existing_stakeholder['username']}), 200
@@ -137,8 +157,13 @@ def add_user():
         'email': data['email'],
         'email_provided': data['email_provided'], # TODO: flag to check if the email has been provided and thatwe can send an email there. 
         'password': data['password'],
+        'decibels': 10,
         'voices': [],  # Initialize an empty list of voices
     }
+
+    new_user["password"] = hashlib.sha256(new_user["password"].encode("utf-8")).hexdigest() # encrypt password
+
+    
     result = db.users.insert_one(new_user)
     new_user['_id'] = str(result.inserted_id)
     return jsonify({'message': 'User created successfully', 'user': new_user}), 201
@@ -162,6 +187,9 @@ def add_stakeholder():
         'password': data['password'],
         'voices': [],  # Initialize an empty list of voices
     }
+
+    new_stakeholder["password"] = hashlib.sha256(new_stakeholder["password"].encode("utf-8")).hexdigest() 
+
     result = db.stakeholders.insert_one(new_stakeholder)
     new_stakeholder['_id'] = str(result.inserted_id)
     return jsonify({'message': 'Stakeholder created successfully', 'user': new_stakeholder}), 201
@@ -330,6 +358,7 @@ def add_voice():
     to_emails=voice['stakeholder_email'],
     subject='Subject line from LLM here ' + sector,
     html_content='<h1>Title for Email</h1> <br> <strong>Line of Emphasis Here</strong> Please do not reply to this email.')
+    print(voice['stakeholder_email'])
     try:
         sg = SendGridAPIClient(os.environ['SENDGRID_API_KEY'])
         response = sg.send(message)
