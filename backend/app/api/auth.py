@@ -19,7 +19,7 @@ def login_user():
     if existing_user and hashlib.sha256(data["password"].encode("utf-8")).hexdigest() == existing_user['password']:
         # Update the user's login status or set a variable indicating they are logged in
         access_token = create_access_token(identity=existing_user['username'], additional_claims={"is_user":"True"}) 
-        return jsonify(access_token=access_token), 200
+        return jsonify({"access_token":access_token, "user_type": 'citizen'}), 200
     elif existing_user:
         return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
     else:
@@ -63,7 +63,8 @@ def login_stakeholder():
     if existing_stakeholder and hashlib.sha256(data["password"].encode("utf-8")).hexdigest() == existing_stakeholder['password']:
         # Update the stakeholder's login status or set a variable indicating they are logged in
         access_token = create_access_token(identity=existing_stakeholder['email'], additional_claims={"is_user": "False"}) 
-        return jsonify(access_token=access_token), 200
+        # return jsonify(access_token=access_token), 200
+        return jsonify({"access_token":access_token, "user_type": 'stakeholder'}), 200
     elif existing_stakeholder:
         return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
     else:
