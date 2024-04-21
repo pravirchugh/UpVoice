@@ -4,18 +4,18 @@ from flask import Blueprint, request, jsonify
 from flask import current_app as app
 from app.model import db
 
-from flask_jwt_extended import create_access_token, JWTManager, jwt_required, get_jwt_identity, create_refresh_token, jwt_refresh_token_required, get_raw_jwt
+from flask_jwt_extended import create_access_token, JWTManager, jwt_required, get_jwt_identity, create_refresh_token, get_jwt
 from datetime import timedelta  
 import hashlib
 
-from ..model.__init__ import blacklist 
+blacklist = app.config['BLACKLIST']
 
 auth = Blueprint("auth", __name__, url_prefix='/auth')
 
-@jwt.token_in_blacklist_loader
-def check_if_token_in_blacklist(decrypted_token):
-    jti = decrypted_token['jti']
-    return jti in blacklist
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blacklist(jwt_header, jwt_payload):
+    jti = jwt_payload["jti"]
+    return jti in app.config['BLACKLIST']
 
 @auth.route('/login-user', methods=['POST'])
 def login_user():
@@ -44,9 +44,13 @@ def logout_user():
     if not logged_in_user:
         return jsonify({'message': 'User not logged in, thus cannot be logged out: '}), 404
     else: # TODO
-        db.users.update_one({'username': logged_in_user['username']}, {'$set': {'logged_in': False}})
-        jti = get_raw_jwt()['jti']
-        blacklist.add(jti)
+        jti = get_jwt()['jti']  # assuming get_jwt() retrieves the current token's jti
+        app.config['BLACKLIST'].add(jti)
+        # return jsonify({"msg": "Successfully logged out"}), 200
+
+        # db.users.update_one({'username': logged_in_user['username']}, {'$set': {'logged_in': False}})
+        # jti = get_jwt()['jti']
+        # blacklist.add(jti)
         return jsonify({'message': 'User Logged out successfully: ' + logged_in_user['username']}), 200
         # data['username']
     '''
@@ -144,7 +148,7 @@ def logout_stakeholder():
         return jsonify({'message': 'User not logged in, thus cannot be logged out: '}), 404
     else: # TODO
         db.stakeholders.update_one({'username': logged_in_stakeholder['username']}, {'$set': {'logged_in': False}})
-        jti = get_raw_jwt()['jti']
+        jti = get_jwt()['jti']
         blacklist.add(jti)
         return jsonify({'message': 'User Logged out successfully: ' + logged_in_stakeholder['username']}), 200
     

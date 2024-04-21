@@ -14,7 +14,7 @@ from app.api.voice import voice
 from flask_jwt_extended import (
     create_access_token, JWTManager, jwt_required, 
     get_jwt_identity, create_refresh_token, 
-    jwt_refresh_token_required, get_raw_jwt
+    get_raw_jwt
 )
 
 from datetime import timedelta
@@ -45,6 +45,8 @@ def create_app(**config_overrides):
     jwt = JWTManager(app) # initialize JWTManager
 
     blacklist = set()
+    app.config['BLACKLIST'] = blacklist
+
 
     api.register_blueprint(stakeholder)
     api.register_blueprint(user)
