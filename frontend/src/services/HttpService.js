@@ -1,12 +1,14 @@
-import axios from 'axios';
-import {API_BASE_URL} from '../constants/config';
-
+import axios from "axios";
+import { API_BASE_URL } from "../constants/config";
 
 class HttpService {
   constructor(options = {}) {
     this.client = axios.create(options);
-    this.client.interceptors.response.use(this.handleSuccessResponse, this.handleErrorResponse);
-    this.client.interceptors.request.use(this.requestInterceptor)
+    this.client.interceptors.response.use(
+      this.handleSuccessResponse,
+      this.handleErrorResponse
+    );
+    this.client.interceptors.request.use(this.requestInterceptor);
     this.unauthorizedCallback = () => {};
   }
 
@@ -15,10 +17,10 @@ class HttpService {
   }
 
   removeHeaders(headerKeys) {
-    headerKeys.forEach(key => delete this.client.defaults.headers[key]);
+    headerKeys.forEach((key) => delete this.client.defaults.headers[key]);
   }
 
-  requestInterceptor(config){
+  requestInterceptor(config) {
     /* Log all Requests or edit config*/
     return config;
   }
@@ -27,17 +29,16 @@ class HttpService {
     return response;
   }
 
-
-  handleErrorResponse = error => {
+  handleErrorResponse = (error) => {
     try {
       const { status } = error.response;
 
       switch (status) {
-      case 401:
-        this.unauthorizedCallback();
-        break;
-      default:
-        break;
+        case 401:
+          this.unauthorizedCallback();
+          break;
+        default:
+          break;
       }
 
       return Promise.reject(error);
@@ -52,8 +53,12 @@ class HttpService {
 }
 
 const options = {
-  baseURL: API_BASE_URL
+  baseURL: API_BASE_URL,
+  headers: {
+    'content-type': 'application/json',
+    'Accept': 'application/json'
+  }
 };
 
 const httpService = new HttpService(options);
-export default httpService; 
+export default httpService;

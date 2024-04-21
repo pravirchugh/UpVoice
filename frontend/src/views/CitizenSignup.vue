@@ -1,5 +1,5 @@
 <template>
-  <form class="signup-form">
+  <form class="signup-form" @submit.prevent>
     <h2 style="text-transform: uppercase;">Sign Up</h2>
 
     <div class="flex flex-column gap-2" style="width: 100%; margin: 10px 0px;">
