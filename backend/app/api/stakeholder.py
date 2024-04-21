@@ -11,11 +11,15 @@ from bson.errors import InvalidId
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 stakeholder = Blueprint("stakeholder", __name__, url_prefix='/stakeholder')
 
-@stakeholder.route('/view-voices', methods=['POST'])
+@stakeholder.route('/view-stakeholder-voices', methods=['POST'])
+@jwt_required()
 def view_stakeholder_voices():
-    stakeholder = db.stakeholders.find_one({'logged_in': True})
+    current_stakeholder = get_jwt_identity() # Get the identity of the current user
+    stakeholder = db.stakeholders.find_one({'email' : current_stakeholder})
     
     if not stakeholder:
         return jsonify({'message': 'No stakeholder currently logged in'}), 404
@@ -34,13 +38,15 @@ def view_stakeholder_voices():
         'subject': voice['subject'],
         'urgency': voice['urgency'],
         'sector': voice['sector'],
-        'status': voice['status']
+        'status': voice['status'],
+        'id': str(voice['_id'])
     } for voice in voices]
     
     return jsonify({'stakeholder': stakeholder['email'], 'voices': voices_list}), 200
 
 
 @stakeholder.route('/change-voice-status', methods=['POST'])
+@jwt_required()
 def change_voice_status():
     data = request.json
     voice_id = data.get('id')
@@ -86,3 +92,5 @@ def change_voice_status():
         print(str(e))
     
     return jsonify({'message': 'Voice status updated successfully'}), 200
+
+

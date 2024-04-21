@@ -11,6 +11,9 @@ from app.api.stakeholder import stakeholder
 from app.api.user import user
 from app.api.voice import voice
 
+from flask_jwt_extended import create_access_token, JWTManager, jwt_required, get_jwt_identity
+from datetime import timedelta
+
 def create_app(**config_overrides):
     app = Flask(__name__, instance_relative_config=True)
 
@@ -27,6 +30,12 @@ def create_app(**config_overrides):
         raise ValueError("SENDGRID_API_KEY is not set in the environment.")
     else:
         print("found the api key")
+
+    # Initializing with JWT
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)  # define the life span of the token
+
+    jwt = JWTManager(app) # initialize JWTManager
 
     api.register_blueprint(stakeholder)
     api.register_blueprint(user)

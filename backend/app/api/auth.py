@@ -4,6 +4,10 @@ from flask import Blueprint, request, jsonify
 from flask import current_app as app
 from app.model import db
 
+from flask_jwt_extended import create_access_token, JWTManager, jwt_required, get_jwt_identity
+from datetime import timedelta  
+import hashlib
+
 auth = Blueprint("auth", __name__, url_prefix='/auth')
 
 @auth.route('/login-user', methods=['POST'])
@@ -12,24 +16,27 @@ def login_user():
     # Check if user already exists in the database
     existing_user = db.users.find_one({'username': data['username']})
     
-    if existing_user and data['password'] == existing_user['password']:
+    if existing_user and hashlib.sha256(data["password"].encode("utf-8")).hexdigest() == existing_user['password']:
         # Update the user's login status or set a variable indicating they are logged in
-        db.users.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
-        return jsonify({'message': 'User logged in successfully ' + existing_user['username']}), 200
+        access_token = create_access_token(identity=existing_user['username']) # create jwt token
+        return jsonify(access_token=access_token), 200
     elif existing_user:
         return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
     else:
         return jsonify({'message': 'Account not found: ' + data['username']}), 404
 
 @auth.route('/logout-user', methods=['POST'])
+@jwt_required()
 def logout_user():
     data = request.json
 
-    logged_in_user = db.users.find_one({'logged_in': True})
+    # Invalidate the JWT
+    current_user = get_jwt_identity() # Get the identity of the current user
+    logged_in_user = db.users.find_one({'username' : current_user})
 
     if not logged_in_user:
         return jsonify({'message': 'User not logged in, thus cannot be logged out: '}), 404
-    else:
+    else: # TODO
         db.users.update_one({'username': logged_in_user['username']}, {'$set': {'logged_in': False}})
         return jsonify({'message': 'User Logged out successfully: ' + logged_in_user['username']}), 200
         # data['username']
@@ -53,39 +60,14 @@ def login_stakeholder():
     # Check if user already exists in the database
     existing_stakeholder = db.stakeholders.find_one({'username': data['username']})
     
-    if existing_stakeholder and data['password'] == existing_stakeholder['password']:
+    if existing_stakeholder and hashlib.sha256(data["password"].encode("utf-8")).hexdigest() == existing_stakeholder['password']:
         # Update the stakeholder's login status or set a variable indicating they are logged in
-        db.stakeholders.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
-        return jsonify({'message': 'Stakeholder logged in successfully ' + existing_stakeholder['username']}), 200
+        access_token = create_access_token(identity=existing_stakeholder['email']) # create jwt token with EMAIL (part of the VOICE object)
+        return jsonify(access_token=access_token), 200
     elif existing_stakeholder:
         return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
     else:
         return jsonify({'message': 'Account not found: ' + data['username']}), 404
-
-@auth.route('/logout-stakeholder', methods=['POST'])
-def logout_stakeholder():
-    data = request.json
-
-    logged_in_stakeholder = db.stakeholders.find_one({'logged_in': True})
-
-    if not logged_in_stakeholder:
-        return jsonify({'message': 'User not logged in, thus cannot be logged out: '}), 404
-    else:
-        db.users.update_one({'username': logged_in_stakeholder['username']}, {'$set': {'logged_in': False}})
-        return jsonify({'message': 'User Logged out successfully: ' + logged_in_stakeholder['username']}), 200
-    '''
-    # Check if user already exists in the database
-    existing_stakeholder = db.stakeholders.find_one({'username': data['username']})
-    
-    if existing_stakeholder and data['password'] == existing_stakeholder['password']:
-        # Update the user's login status or set a variable indicating they are logged in
-        db.stakeholders.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
-        return jsonify({'message': 'Stakeholder logged in successfully ' + existing_stakeholder['username']}), 200
-    elif existing_stakeholder:
-        return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
-    else:
-        return jsonify({'message': 'Account not found: ' + data['username']}), 404
-    '''
 
 
 @auth.route('/add-user', methods=['POST'])
@@ -104,12 +86,16 @@ def add_user():
         'email': data['email'],
         'email_provided': data['email_provided'], # TODO: flag to check if the email has been provided and thatwe can send an email there. 
         'password': data['password'],
+        'decibels': 10,
         'voices': [],  # Initialize an empty list of voices
     }
+
+    new_user["password"] = hashlib.sha256(new_user["password"].encode("utf-8")).hexdigest() # encrypt password
+
+    
     result = db.users.insert_one(new_user)
     new_user['_id'] = str(result.inserted_id)
     return jsonify({'message': 'User created successfully', 'user': new_user}), 201
-
 
 @auth.route('/add-stakeholder', methods=['POST']) 
 def add_stakeholder():
@@ -129,6 +115,24 @@ def add_stakeholder():
         'password': data['password'],
         'voices': [],  # Initialize an empty list of voices
     }
+
+    new_stakeholder["password"] = hashlib.sha256(new_stakeholder["password"].encode("utf-8")).hexdigest() 
+
     result = db.stakeholders.insert_one(new_stakeholder)
     new_stakeholder['_id'] = str(result.inserted_id)
     return jsonify({'message': 'Stakeholder created successfully', 'user': new_stakeholder}), 201
+
+@auth.route('/logout-stakeholder', methods=['POST'], endpoint='logout_stakeholder')
+@jwt_required()
+def logout_stakeholder():
+    data = request.json
+
+    current_stakeholder = get_jwt_identity() # Get the identity of the current user
+    logged_in_stakeholder = db.stakeholders.find_one({'username' : current_stakeholder})
+
+    if not logged_in_stakeholder:
+        return jsonify({'message': 'User not logged in, thus cannot be logged out: '}), 404
+    else: # TODO
+        db.stakeholders.update_one({'username': logged_in_stakeholder['username']}, {'$set': {'logged_in': False}})
+        return jsonify({'message': 'User Logged out successfully: ' + logged_in_stakeholder['username']}), 200
+    

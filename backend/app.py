@@ -18,6 +18,8 @@ import hashlib
 from dotenv import load_dotenv
 import os
 
+from flask_jwt_extended import create_access_token, JWTManager, jwt_required, get_jwt_identity
+from datetime import timedelta
 
 
 load_dotenv("sendgrid.env")  # This loads the .env file at the path given, or default to the .env file in the same directory as the script.
@@ -43,6 +45,11 @@ try:
 except Exception as e:
     print(e)
 
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)  # define the life span of the token
+
+jwt = JWTManager(app) # initialize JWTManager
+
 @app.route('/login-user', methods=['POST'])
 def login_user():
     data = request.json
@@ -51,22 +58,25 @@ def login_user():
     
     if existing_user and hashlib.sha256(data["password"].encode("utf-8")).hexdigest() == existing_user['password']:
         # Update the user's login status or set a variable indicating they are logged in
-        db.users.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
-        return jsonify({'message': 'User logged in successfully ' + existing_user['username']}), 200
+        access_token = create_access_token(identity=existing_user['username']) # create jwt token
+        return jsonify(access_token=access_token), 200
     elif existing_user:
         return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
     else:
         return jsonify({'message': 'Account not found: ' + data['username']}), 404
 
 @app.route('/logout-user', methods=['POST'])
+@jwt_required()
 def logout_user():
     data = request.json
 
-    logged_in_user = db.users.find_one({'logged_in': True})
+    # Invalidate the JWT
+    current_user = get_jwt_identity() # Get the identity of the current user
+    logged_in_user = db.users.find_one({'username' : current_user})
 
     if not logged_in_user:
         return jsonify({'message': 'User not logged in, thus cannot be logged out: '}), 404
-    else:
+    else: # TODO
         db.users.update_one({'username': logged_in_user['username']}, {'$set': {'logged_in': False}})
         return jsonify({'message': 'User Logged out successfully: ' + logged_in_user['username']}), 200
         # data['username']
@@ -92,22 +102,24 @@ def login_stakeholder():
     
     if existing_stakeholder and hashlib.sha256(data["password"].encode("utf-8")).hexdigest() == existing_stakeholder['password']:
         # Update the stakeholder's login status or set a variable indicating they are logged in
-        db.stakeholders.update_one({'username': data['username']}, {'$set': {'logged_in': True}})
-        return jsonify({'message': 'Stakeholder logged in successfully ' + existing_stakeholder['username']}), 200
+        access_token = create_access_token(identity=existing_stakeholder['username']) # create jwt token
+        return jsonify(access_token=access_token), 200
     elif existing_stakeholder:
         return jsonify({'message': 'Incorrect password: ' + data['username']}), 400
     else:
         return jsonify({'message': 'Account not found: ' + data['username']}), 404
 
-@app.route('/logout-stakeholder', methods=['POST'])
+@app.route('/logout-stakeholder', methods=['POST'], endpoint='logout_stakeholder')
+@jwt_required()
 def logout_stakeholder():
     data = request.json
 
-    logged_in_stakeholder = db.stakeholders.find_one({'logged_in': True})
+    current_stakeholder = get_jwt_identity() # Get the identity of the current user
+    logged_in_stakeholder = db.stakeholders.find_one({'username' : current_stakeholder})
 
     if not logged_in_stakeholder:
         return jsonify({'message': 'User not logged in, thus cannot be logged out: '}), 404
-    else:
+    else: # TODO
         db.users.update_one({'username': logged_in_stakeholder['username']}, {'$set': {'logged_in': False}})
         return jsonify({'message': 'User Logged out successfully: ' + logged_in_stakeholder['username']}), 200
     '''
