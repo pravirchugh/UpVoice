@@ -1,9 +1,9 @@
 <template>
-  <form class="login-form" style="padding: 20px;">
+  <form class="login-form" style="padding: 20px;" @submit.prevent>
     <h2>Stakeholder Login</h2>
     <div class="flex flex-column gap-2" style="width: 100%;margin: 10px 0px;">
-      <label for="email">Email</label>
-      <InputText id="email" v-model="email" aria-describedby="username-help"  style="width: 100%;" />
+      <label for="username">Username</label>
+      <InputText id="username" v-model="username" aria-describedby="username-help"  style="width: 100%;" />
     </div>
     <div class="flex flex-column gap-2" style="width: 100%; margin: 10px 0px;">
       <label for="password">Password</label>
@@ -26,13 +26,21 @@ import authService from '../services/AuthService'
 export default {
   data(){
     return {
-      email: '',
+      username: '',
       password: ''
     }
   },
   methods: {
     loginStakeholder() {
-      return authService.loginStakeholder()
+      const payload = {
+        username: this.username,
+        password: this.password
+      }
+      return authService.loginStakeholder(payload).then((data) => {
+        console.log(data);
+      }).catch((err) => {
+        console.log(err);
+      })
     }
   }
 

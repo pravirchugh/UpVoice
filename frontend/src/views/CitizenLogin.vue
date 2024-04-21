@@ -1,9 +1,9 @@
 <template>
-  <form class="login-form">
+  <form class="login-form" @submit.prevent>
     <h2>Citizen Login</h2>
     <div class="flex flex-column gap-2" style="width: 100%;margin: 10px 0px;">
-      <label for="email">Email</label>
-      <InputText id="email" v-model="email" style="width: 100%;" />
+      <label for="username">Username</label>
+      <InputText id="username" v-model="username" style="width: 100%;" />
     </div>
     <div class="flex flex-column gap-2" style="width: 100%;margin: 10px 0px;">
       <label for="password">Password</label>
@@ -19,13 +19,17 @@ import authService from '../services/AuthService'
 export default {
   data() {
     return {
-      email: '',
+      username: '',
       password: ''
     }
   },
   methods: {
     loginUser() {
-      authService.loginUser();
+      const payload = {
+        username: this.username,
+        password: this.password
+      }
+      authService.loginUser(payload);
     }
   }
 }
