@@ -87,7 +87,7 @@ def add_voice():
     }
 
     # Call Gemini here to fill out the email, subject and urgency (50 is just the default)
-    email_body = model.generate_content("Generate an email complaint, in HTML format with HTML elements from a citizen to an investor at " + company + ". The category of the issue is " + sector + ". Please include and expand on this summary of the citizen's grievance: " + summary + ". Do not include any placeholders AT ALL, and do not make personal requests. Instead, make emotional calls to action for the company as a whole. Do not return any other information besides the email in HTML format. ")
+    email_body = model.generate_content("Generate an email complaint, in HTML format with HTML elements from a citizen to an investor at " + company + ". The category of the issue is " + sector + ". Please include the summary of the citizen's grievance: " + summary + ". Keep the email professional and succinct. Do not include any placeholders AT ALL, and do not make personal requests. Instead, make calls to action for the company as a whole. Do not return any other information besides the email in HTML format. ")
     print(email_body.text)
 
     email_subject = model.generate_content("Generate an email complaint from a citizen to an investor at " + company + ". The category of the issue is " + sector + ". Please include and expand on this summary of the citizen's grievance: " + summary + ". Return ONLY the subject of the email, nothing else.")
