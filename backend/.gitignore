@@ -1,2 +1,6 @@
 sendgrid.env
+<<<<<<< Updated upstream
 sendEmail.py
+=======
+.env
+>>>>>>> Stashed changes

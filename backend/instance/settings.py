@@ -1,0 +1,9 @@
+import os
+
+SECRET_KEY=os.environ['SECRET_KEY']
+DB_HOST=os.environ['DB_HOST']
+DATABASE_NAME=os.environ['DATABASE_NAME']
+DB_URI = "mongodb://localhost:27017/%s" % (DATABASE_NAME)
+MONGO_DB_DATABASE_URI = DB_URI
+SENDGRID_API_KEY=os.environ['SENDGRID_API_KEY']
+SENDGRID_FROM_EMAIL=os.environ['SENDGRID_FROM_EMAIL']
