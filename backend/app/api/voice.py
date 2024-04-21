@@ -111,6 +111,18 @@ def add_voice():
         print("EXCEPTION!")
         print(str(e))
 
+    voice = {
+        'citizen_username': username,
+        'company': company,
+        'sector': sector,
+        'stakeholder_email': stakeholder_email,
+        'voice_summary': summary,
+        'email': email_body.text[7:],
+        'subject': email_subject.text,
+        'urgency': 50,
+        'status': "unresolved"
+    }
+
     # Store into collection called voices
     db.voices.insert_one(voice)
     return jsonify({'message': 'Voice submitted successfully'}), 201
