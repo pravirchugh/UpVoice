@@ -32,16 +32,13 @@ def create_app(**config_overrides):
     else:
         print("found the api key")
 
-<<<<<<< Updated upstream
     # Initializing with JWT
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)  # define the life span of the token
 
     jwt = JWTManager(app) # initialize JWTManager
 
-=======
     api.register_blueprint(common)
->>>>>>> Stashed changes
     api.register_blueprint(stakeholder)
     api.register_blueprint(user)
     api.register_blueprint(voice)

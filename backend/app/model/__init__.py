@@ -3,7 +3,7 @@ import os
 from pymongo.mongo_client import MongoClient
 
 def get_db():
-    client = MongoClient("mongodb+srv://pravirc:pravirc1@clustermain.jwpbamn.mongodb.net/?retryWrites=true&w=majority")
+    client = MongoClient(os.getenv('MONGODB_URI'))
     database_name = 'upvoice'
     db = client[database_name]
     return db
