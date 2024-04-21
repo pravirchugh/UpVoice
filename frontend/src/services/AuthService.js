@@ -69,11 +69,11 @@ class AuthService extends ApiService {
   };
 
   logoutStakeholder = async () => {
-    const { data } = await this.apiClient.post(ENDPOINTS.LOGOUT_STAKEHOLDER, {});
+    // const { data } = await this.apiClient.post(ENDPOINTS.LOGOUT_STAKEHOLDER, {});
     this.destroySession();
     return {
       ok: true,
-      data,
+      // data,
     };
   };
 
