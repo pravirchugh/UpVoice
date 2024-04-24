@@ -1,7 +1,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/pravirchugh/Upvoice">
+  <a href="https://github.com/pravirchugh/UpVoice">
     <img src="images/Logo.png" alt="Logo" width="120" height="120">
   </a>
 
@@ -17,7 +17,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Providing a platform for citizens to voice concerns directly to stakeholders of companies, fostering transparency and accountability. Join Upvoice for impactful change!
+Providing a platform for citizens to voice concerns directly to stakeholders of companies, fostering transparency and accountability. Join UpVoice for impactful change!
 
 ### Team Members
 - Pravir Chugh
@@ -29,8 +29,8 @@ Providing a platform for citizens to voice concerns directly to stakeholders of 
 
 * [![Vue.js][Vue.js]][Vue-url]
 * [![Flask][Flask]][Flask-url]
-* [![Postman][Postman]][Postman-url]
 * [![MongoDB][MongoDB]][MongoDB-url]
+* [![Postman][Postman]][Postman-url]
 * **Sendgrid API**
 * **Gemini API**
 
@@ -52,12 +52,7 @@ Our main goal is for citizens to have a voice to share their unique stories and 
 [Vue-url]: https://vuejs.org/
 [Flask]: https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white
 [Flask-url]: https://flask.palletsprojects.com/
-[Postman]: https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white
-[Postman-url]: https://postman.com/
-[Sendgrid]: https://img.shields.io/badge/SendGrid-FFFFFF?style=for-the-badge&logo=sendgrid&logoColor=blue
-[Sendgrid-url]: https://sendgrid.com/
-[Gemini]: https://img.shields.io/badge/Gemini-API?style=for-the-badge&logo=gemini
-[Gemini-url]: https://www.gemini.com/
 [MongoDB]: https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white
 [MongoDB-url]: https://mongodb.com/
-
+[Postman]: https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white
+[Postman-url]: https://postman.com/
