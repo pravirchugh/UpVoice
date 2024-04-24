@@ -7,9 +7,9 @@
         <h1>Raise your voices</h1>
       </div>
       <div class="content">
-        <p>Giving Citizens a new voice! The right to inform stakeholders on
-          if the business practices of a company are being followed or not - can view this through an environmental lens
-          as well.
+        <p>Giving citizens a new <u>voice</u>! The right to inform stakeholders on
+          if the business practices of a company are being followed or not. 
+          <u>Fairness, accountability, change. </u>
         </p>
       </div>
     </div>
@@ -17,7 +17,7 @@
   <div class="info">
     <img src="../assets/home/megaphone.jpg" alt="megaphone image" class="mega">
     <div class="info-body">
-      <h1>What we do</h1>
+      <h1>What We Do</h1>
        <p>If you are a citizen - Raise issues which have been ignored by  </p>
        <p>If you are a investor - See where your organization is lacking, optemize profits!</p>
     </div>
