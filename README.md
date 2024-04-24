@@ -8,10 +8,6 @@
   <h1 align="center">Upvoice</h1>
 
   <p align="center">
-    Providing a platform for citizens to voice concerns directly to stakeholders of companies, fostering transparency and accountability. Join Upvoice for impactful change!
-  </p>
-  
-  <p>
     <b>Project Submission for LA Hacks '24</b>
   </p>
     
