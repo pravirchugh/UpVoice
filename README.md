@@ -2,7 +2,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/pravirchugh/Upvoice">
-    <img src="images/Logo.png" alt="Logo" width="80" height="80">
+    <img src="images/Logo.png" alt="Logo" width="120" height="120">
   </a>
 
   <h1 align="center">Upvoice</h1>
