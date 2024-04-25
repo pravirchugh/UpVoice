@@ -5,7 +5,7 @@
     <img src="images/Logo.png" alt="Logo" width="120" height="120">
   </a>
 
-  <h1 align="center">Upvoice</h1>
+  <h1 align="center">UpVoice</h1>
 
   <p align="center">
     <b>Project Submission for LA Hacks '24</b>
@@ -31,8 +31,8 @@ Providing a platform for citizens to voice concerns directly to stakeholders of 
 * [![Flask][Flask]][Flask-url]
 * [![MongoDB][MongoDB]][MongoDB-url]
 * [![Postman][Postman]][Postman-url]
-* **Sendgrid API**
-* **Gemini API**
+* [**Sendgrid API**](https://docs.sendgrid.com/)
+* [**Gemini API**](https://ai.google.dev/)
 
 ## Inspiration
 We were inspired by the few and far between ways that a general citizen could share their experiences of being harmed by a company's wrongdoings. This spreads to multiple industries, including home energy, waste management, air travel, healthcare, pharmaceuticals, and more. The most commonly-used way that citizens can voice their concerns is through the company's contact departments, and the wheels of those systems turn slowly. We strived to create a centralized platform to ensure that all voices, big or small, were heard. 
