@@ -34,6 +34,16 @@ Providing a platform for citizens to voice concerns directly to stakeholders of 
 * [**Sendgrid API**](https://docs.sendgrid.com/)
 * [**Gemini API**](https://ai.google.dev/)
 
+## AI-Powered Features
+### Advanced Voice Analysis:
+Utilizing the Gemini API, Upvoice analyzes submissions to identify semantic similarities with existing entries. This process not only enables the merging of similar grievances but also applies predictive analytics to estimate the potential impact, such as cost savings or efficiency improvements.
+
+### Urgency Detection:
+Our backend endpoints evaluate the urgency of submissions to analyze key phrases and content. This helps in prioritizing issues that need immediate attention, ensuring timely responses to critical voices.
+
+### Automated Content Generation:
+Upvoice automates the generation of detailed, concise reports from user submissions. These reports effectively communicate the core issues, urgency, and impact, making it easier for stakeholders to understand and act on the voices.
+
 ## Inspiration
 We were inspired by the few and far between ways that a general citizen could share their experiences of being harmed by a company's wrongdoings. This spreads to multiple industries, including home energy, waste management, air travel, healthcare, pharmaceuticals, and more. The most commonly-used way that citizens can voice their concerns is through the company's contact departments, and the wheels of those systems turn slowly. We strived to create a centralized platform to ensure that all voices, big or small, were heard. 
 
